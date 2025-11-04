@@ -1,0 +1,143 @@
+@font-face {
+    font-family: 'Amoresa';
+    src: url('fonts/Amoresa.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #836b9d;
+    padding: 20px 40px;
+    z-index: 1000;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.logo h1 {
+    color: white;
+    margin: 0;
+    font-size: 28px;
+    font-weight: bold;
+    font-family: 'Amoresa', cursive;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #00d9ff;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-box input {
+    padding: 8px 15px;
+    border: 2px solid white;
+    border-radius: 20px;
+    background-color: transparent;
+    color: white;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.search-box input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.search-box input:focus {
+    border-color: #00d9ff;
+}
+
+.search-box button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.search-box button:hover {
+    color: #00d9ff;
+}
+
+footer{
+    position: fixed;
+    background-color: #836b9d;
+    width: 100%;
+    padding: 30px;
+    text-align: center;
+}
+
+.footer-content p {
+    color: white;
+    margin-bottom: 15px;
+}
+
+.social-media {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.social-media a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.3s ease;
+} 
+
+.social-media a:hover {
+    color: #00d9ff;
+}
+
+.social-media i {
+    font-size: 24px;
+}
+
+section{
+    text-align: center;
+    padding: 100px;
+    margin-top: 0px;
+    margin-bottom: 500px;
+}
