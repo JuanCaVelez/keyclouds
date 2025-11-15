@@ -28,8 +28,14 @@
         </div>
     </nav>
     </header>
-    <section>
-        
+    <section id="productos">
+        <h2>Nuestros productos</h2>
+        <div id="productosGrid" class="products-grid">
+
+        </div>
+        <div id="noProducts" class="no-products" style="display: none;">
+            <p>No hay productos disponibles en este momento.</p>
+        </div>
     </section>
     <footer>
         <div class="footer-content">      
@@ -47,5 +53,23 @@
             <p>&copy; 2025 KeyClouds. All rights reserved.</p>
         </div>
     </footer>
+
+    <script src="script/products.js"></script>
+    <script>
+        displayProducts();
+
+        function searchProducts(){
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const products = getProducts();
+            const filtered = products.filter(product => product.name.toLowerCase().includes(searchTerm));
+            displayFilteredProducts(filtered);
+
+            document.getElementById('searchInput').addEventListener('input', function(){
+                if(e.key === 'Enter'){
+                    displayProducts();
+                }
+            });
+        }
+    </script>
 </body>
 </html>
