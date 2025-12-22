@@ -57,9 +57,10 @@ header {
 .nav-links a {
     color: white;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 24px;
     transition: color 0.3s ease;
     position: relative;
+    font-family: 'Amoresa', cursive;
 }
 
 .nav-links a:hover,
@@ -142,7 +143,7 @@ footer {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
 }
 
 .social-media a {
@@ -153,6 +154,7 @@ footer {
     align-items: center;
     gap: 8px;
     transition: color 0.3s ease;
+    font-family: 'Amoresa', cursive;
 } 
 
 .social-media a:hover {
@@ -475,6 +477,87 @@ section h2 {
     text-align: center;
     color: #666;
     padding: 40px;
+}
+
+#productCategory {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+#productCategory:focus {
+    outline: none;
+    border-color: #ff6b9d;
+    box-shadow: 0 0 0 3px rgba(255, 107, 157, 0.1);
+}
+
+#productCategory option {
+    padding: 10px;
+}
+
+/* Estilo cuando está vacío */
+#productCategory:invalid {
+    color: #999;
+}
+
+#productCategory option:first-child {
+    color: #999;
+}
+
+/* Categoría en la lista de admin */
+.admin-product-category {
+    display: inline-block;
+    background-color: #ff6b9d;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 5px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.admin-product-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.admin-product-details h4 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+/* Small text en formularios */
+.form-group small {
+    display: block;
+    margin-top: 5px;
+    color: #666;
+    font-size: 13px;
+}
+
+/* Mejorar el preview de imagen */
+.image-preview {
+    margin-top: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 300px;
+}
+
+.image-preview img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* ========== RESPONSIVE ========== */

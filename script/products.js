@@ -1,3 +1,8 @@
+const CATEGORIES = [
+    "Navidad",
+    "Halloween",
+];
+
 function getProducts() {
     try {
         const products = localStorage.getItem('products');
@@ -38,11 +43,25 @@ function updateProduct(id, updatedProduct) {
         saveProducts(products);
     }
 }
+// ==========================
+//   FILTRAR POR CATEGORÍA
+// ==========================
 
 function deleteProduct(id) {
     const products = getProducts();
     const filteredProducts = products.filter(p => p.id !== id);
     saveProducts(filteredProducts);
+}
+
+function filterByCategory(category) {
+    const products = getProducts();
+
+    if (category === "all") {
+        displayProducts(products);
+    } else {
+        const filtered = products.filter(p => p.category === category);
+        displayProducts(filtered);
+    }
 }
 
 // ==========================
@@ -73,7 +92,8 @@ function displayProducts(productsToDisplay = null) {
             </div>
             <div class="product-info">
                 <h3>${product.name}</h3>
-                <p class="product-price">${product.price}</p>
+                ${product.category ? `<p class="product-category">${product.category}</p>` : ''}
+                <p class="product-price">$${product.price}</p>
                 <a href="${product.link}" target="_blank" class="btn-buy">
                     <i class="fa-solid fa-cart-shopping"></i> Comprar
                 </a>
@@ -103,6 +123,7 @@ function displayAdminProducts() {
 
             <div class="admin-product-details">
                 <h4>${product.name}</h4>
+                ${product.category ? `<p class="admin-product-category">${product.category}</p>` : ''}
                 <p class="admin-product-price">${product.price} $ </p>
                 <a href="${product.link}" target="_blank" class="admin-product-link">
                     <i class="fa-solid fa-link"></i> Ver enlace
