@@ -18,25 +18,39 @@
         </div>
         <ul class="nav-links">
             <li><a href="#inicio">Inicio</a></li>
-            <li><a href="#productos">Productos</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" onclick="return false">
+                    Productos <i class="fa-solid fa-chevron-down"></i>
+                </a>
+                <ul class="dropdown-menu" id="navbarCategoryMenu">
+                    <li><a href="#productos" onclick="selectCategory('all', 'Todas las categorías')">Todas las categorías</a></li>
+                </ul>
+            </li>
         </ul>
+        <div class="admin-access">
+            <a href="login.html" class="admin-link" title="Acceso administrador">
+                <i class="fa-solid fa-user-shield"></i>
+            </a>
+        </div>
         <div class="search-box">
-            <input type="text" placeholder="Buscar..." aria-label="Buscar productos">
-            <button type="button" aria-label="Buscar">
+            <input type="text" id="searchInput" placeholder="Buscar..." aria-label="Buscar productos">
+            <button type="button" onclick="searchProducts()" aria-label="Buscar">
                 <i class="fa-solid fa-magnifying-glass"></i>
             </button>
         </div>
     </nav>
     </header>
-    <section id="productos">
-        <h2>Nuestros productos</h2>
-        <div id="productosGrid" class="products-grid">
 
+    <section id="productos">
+        <h2 id="productosTitle">Nuestros productos</h2>
+        
+        <div id="productosGrid" class="products-grid">
         </div>
         <div id="noProducts" class="no-products" style="display: none;">
-            <p>No hay productos disponibles en este momento.</p>
+            <p id="noProductsText"></p>
         </div>
     </section>
+
     <footer>
         <div class="footer-content">      
             <div class="social-media">
@@ -56,20 +70,84 @@
 
     <script src="script/products.js"></script>
     <script>
-        displayProducts();
+        let currentSelectedCategory = 'all';
 
-        function searchProducts(){
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const products = getProducts();
-            const filtered = products.filter(product => product.name.toLowerCase().includes(searchTerm));
-            displayFilteredProducts(filtered);
+        // Inicializar página
+        window.onload = function() {
+            displayProducts();
+            loadNavbarCategoryMenu();
+        };
 
-            document.getElementById('searchInput').addEventListener('input', function(){
-                if(e.key === 'Enter'){
-                    displayProducts();
-                }
+        // Cargar categorías en el menú del navbar
+        function loadNavbarCategoryMenu() {
+            const menu = document.getElementById('navbarCategoryMenu');
+            if (!menu) return;
+            const categories = getCategories();
+            
+            // Mantener "Todas las categorías"
+            let html = `
+                <li>
+                    <a href="#productos" onclick="selectCategory('all', 'Todas las categorías'); return false;">
+                        Todas las categorías
+                    </a>
+                </li>
+            `;
+            
+            // Agregar categorías únicas
+            categories.forEach(category => {
+                html += `
+                    <li>
+                        <a href="#productos" onclick="selectCategory('${category}', '${category}'); return false;">
+                            ${category}
+                        </a>
+                    </li>
+                `;
             });
+            
+            menu.innerHTML = html;
         }
+
+        // Seleccionar categoría
+        function selectCategory(category, displayName) {
+            currentSelectedCategory = category;
+
+            const title = document.getElementById('productosTitle');
+            if(title) {
+                title.textContent = 
+                    category === "all"
+                        ? "Nuestros productos"
+                        : `Categoría: ${displayName}`;
+            }
+
+            filterByCategory(category);
+
+            document.getElementById("productos").scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Búsqueda de productos
+        function searchProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            const products = getProducts();
+            
+            if (!searchTerm) {
+                displayProducts();
+                return;
+            }
+            
+            const filtered = products.filter(product => 
+                product.name.toLowerCase().includes(searchTerm) ||
+                (product.category && product.category.toLowerCase().includes(searchTerm))
+            );
+            
+            displayProducts(filtered);
+        }
+
+        // Buscar al presionar Enter
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchProducts();
+            }
+        });
     </script>
 </body>
 </html>

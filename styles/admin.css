@@ -1,0 +1,370 @@
+@font-face {
+    font-family: 'Amoresa';
+    src: url('fonts/Amoresa.ttf') format('truetype');
+}
+
+/* ==========================
+   RESET
+   ========================== */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+/* ==========================
+   NAVBAR ADMIN (SIMPLE)
+   ========================== */
+
+header {
+    background-color: #836b9d;
+    padding: 20px 40px;
+}
+
+.navbar {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Logo */
+.logo h1 {
+    color: white;
+    margin: 0;
+    font-family: 'Amoresa', cursive;
+    font-size: 28px;
+}
+
+/* Links */
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    font-family: 'Amoresa', cursive;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: #00d9ff;
+}
+
+/* Usuario admin */
+.admin-user-menu {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.admin-username {
+    color: white;
+    font-weight: bold;
+}
+
+/* Botón logout */
+.btn-logout {
+    background-color: #f44336;
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-logout:hover {
+    background-color: #da190b;
+}
+
+/* ==========================
+   RESPONSIVE NAVBAR
+   ========================== */
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+}
+
+/* ==========================
+   CONTENIDO ADMIN
+   ========================== */
+
+.admin-section {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.admin-section h2 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-family: 'Amoresa', cursive;
+    font-size: 32px;
+}
+
+.admin-form-container h3,
+.admin-products-list h3 {
+    margin-top: 0;
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+/* ==========================
+   FORMULARIO
+   ========================== */
+
+.admin-form-container {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.1);
+    margin-bottom: 40px;
+}
+
+.product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #836b9d;
+}
+
+.form-group small {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Preview imagen */
+.image-preview {
+    margin-top: 10px;
+    max-width: 300px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.image-preview img {
+    width: 100%;
+    display: block;
+    border-radius: 8px;
+}
+
+/* Botones formulario */
+.form-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 12px 30px;
+    border-radius: 25px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background-color: #836b9d;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #00d9ff;
+    color: black;
+}
+
+.btn-secondary {
+    background-color: #ddd;
+}
+
+.btn-secondary:hover {
+    background-color: #bbb;
+}
+
+/* ==========================
+   LISTA DE PRODUCTOS
+   ========================== */
+
+.admin-products-list {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.1);
+}
+
+.admin-product-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.admin-product-thumb {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.admin-product-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.admin-product-details h4 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.admin-product-category {
+    display: inline-block;
+    background-color: #836b9d;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    width: fit-content;
+}
+
+.admin-product-price {
+    font-weight: bold;
+    color: #836b9d;
+}
+
+.admin-product-link {
+    font-size: 14px;
+    color: #666;
+    text-decoration: none;
+}
+
+.admin-product-link:hover {
+    color: #836b9d;
+}
+
+.admin-product-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-edit,
+.btn-delete {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    transition: transform 0.2s;
+}
+
+.btn-edit {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-delete {
+    background-color: #f44336;
+    color: white;
+}
+
+.btn-edit:hover,
+.btn-delete:hover {
+    transform: scale(1.05);
+}
+
+/* ==========================
+   RESPONSIVE
+   ========================== */
+
+@media (max-width: 768px) {
+
+    .admin-header {
+        padding: 15px 20px;
+    }
+
+    .admin-navbar {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .admin-section {
+        padding: 20px;
+    }
+
+    .admin-product-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .admin-product-thumb {
+        width: 100%;
+        max-width: 120px;
+        height: auto;
+    }
+
+    .admin-product-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .form-buttons {
+        flex-direction: column;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+    }
+}

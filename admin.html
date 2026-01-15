@@ -3,70 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Admin - KeyClouds</title>
+    <link rel="stylesheet" href="styles/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <header>
         <nav class="navbar">
             <div class="logo">
                 <h1>KeyClouds</h1>
             </div>
+
             <ul class="nav-links">
                 <li><a href="index.html">Inicio</a></li>
                 <li><a href="index.html#productos">Productos</a></li>
                 <li><a href="admin.html" class="active">Admin</a></li>
             </ul>
-            <div class="search-box">
-                <a href="index.html" class="back-btn">
-                    <i class="fa-solid fa-arrow-left"></i> Volver
-                </a>
+
+            <div class="admin-user-menu">
+                <span class="admin-username">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span id="currentUser">Admin</span>
+                </span>
+                <button onclick="handleLogout()" class="btn-logout" title="Cerrar Sesión">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Salir
+                </button>
             </div>
         </nav>
     </header>
-    
     <section class="admin-section">
         <h2>Panel de Administración</h2>
-        
-        <!-- Formulario para agregar/editar productos -->
+
+        <!-- ===== FORMULARIO ===== -->
         <div class="admin-form-container">
             <h3 id="formTitle">Agregar Nuevo Producto</h3>
+
             <form id="productForm" class="product-form">
-                <input type="hidden" id="productId" value="">
-                
+                <input type="hidden" id="productId">
+
                 <div class="form-group">
                     <label for="productName">Nombre del Producto *</label>
-                    <input type="text" id="productName">
+                    <input type="text" id="productName" required>
                 </div>
 
                 <div class="form-group">
                     <label for="productCategory">Categoría *</label>
                     <select id="productCategory" required>
-                        <option value="">Selecciona una categoria</option>
-                        <option value="Velas de navidad">Velas de navidad</option>
-                        <option value="Velas de halloween">Velas de halloween</option>
+                        <option value="">Selecciona una categoría</option>
                     </select>
-                    <small>Seleccione la categoría correspondiente al producto.</small>
+                    <small>Selecciona la categoría del producto</small>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="productPrice">Precio *</label>
-                    <input type="text" id="productPrice">
+                    <input type="text" id="productPrice" required placeholder="15.00">
                 </div>
-                
+
                 <div class="form-group">
                     <label for="productImage">Imagen del Producto *</label>
-                    <input type="file" id="productImage" accept="image/*">
-                    <small>Formatos aceptados: JPG, PNG, GIF</small>
+                    <input type="file" id="productImage" accept="image/*" multiple>
+                    <small>Formatos aceptados: JPG, PNG, GIF Puedes subir hasta 3 imágenes (colores)</small>
                     <div id="imagePreview" class="image-preview"></div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="productLink">Enlace de Compra *</label>
-                    <input type="url" id="productLink">
+                    <input type="url" id="productLink" required placeholder="https://wa.me/...">
                 </div>
-                
+
                 <div class="form-buttons">
                     <button type="submit" class="btn-primary">
                         <i class="fa-solid fa-save"></i> Guardar Producto
@@ -77,33 +83,47 @@
                 </div>
             </form>
         </div>
-        
-        <!-- Lista de productos -->
+
+        <!-- ===== LISTA DE PRODUCTOS ===== -->
         <div class="admin-products-list">
             <h3>Productos Registrados</h3>
             <div id="adminProductsList">
-                <!-- Los productos se cargarán aquí -->
+                <!-- Renderizado por JS -->
             </div>
         </div>
     </section>
-    
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2024 KeyClouds. All rights reserved.</p>
-            <div class="social-media">
-                <a href="#" aria-label="WhatsApp">
-                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
-                </a>
-                <a href="#" aria-label="Instagram">
-                    <i class="fa-brands fa-instagram"></i> Instagram
-                </a>
-                <a href="#" aria-label="TikTok">
-                    <i class="fa-brands fa-tiktok"></i> TikTok
-                </a>
-            </div>
-        </div>
-    </footer>
+
+    <!-- ==========================
+         SCRIPTS
+         ========================== -->
+    <script src="script/auth.js"></script>
     <script src="script/products.js"></script>
     <script src="script/admin.js"></script>
+
+    <script>
+        // Proteger página
+        requireAuth();
+
+        // Mostrar usuario
+        const session = getSessionData();
+        if (session) {
+            document.getElementById('currentUser').textContent = session.username;
+        }
+
+        function handleLogout() {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                logout();
+            }
+        }
+
+        // Advertencia sesión
+        setInterval(() => {
+            const timeRemaining = getSessionTimeRemaining();
+            if (timeRemaining <= 5 && timeRemaining > 0) {
+                console.warn(`Tu sesión expirará en ${timeRemaining} minutos`);
+            }
+        }, 60000);
+    </script>
+
 </body>
 </html>
