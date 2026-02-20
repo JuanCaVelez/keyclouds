@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ==========================
-   ENVÍO DEL FORMULARIO
+   FORMULARIO
    ========================== */
 document.getElementById("productForm").addEventListener("submit", function (e) {
   e.preventDefault();
@@ -17,7 +17,7 @@ document.getElementById("productForm").addEventListener("submit", function (e) {
 });
 
 /* ==========================
-   GUARDAR / EDITAR PRODUCTO
+   GUARDAR PRODUCTO
    ========================== */
 function saveProduct() {
   const id = document.getElementById("productId").value || Date.now();
@@ -26,36 +26,22 @@ function saveProduct() {
   const price = document.getElementById("productPrice").value.trim();
   const link = document.getElementById("productLink").value.trim();
 
-  // URLs Cloudinary (hasta 3 colores)
   const image1 = document.getElementById("productImage1").value.trim();
   const image2 = document.getElementById("productImage2").value.trim();
   const image3 = document.getElementById("productImage3").value.trim();
 
-  const images = [image1, image2, image3].filter(img => img !== "");
+  const images = [image1, image2, image3].filter(Boolean);
 
-  // Validaciones
-  if (!name || !category || !price || !link) {
+  if (!name || !category || !price || !link || images.length === 0) {
     alert("Completa todos los campos obligatorios");
     return;
   }
 
-  if (images.length === 0) {
-    alert("Debes agregar al menos una imagen de Cloudinary");
-    return;
-  }
-
-  const product = {
-    id,
-    name,
-    category,
-    price,
-    images,
-    link
-  };
+  const product = { id, name, category, price, images, link };
 
   let products = JSON.parse(localStorage.getItem("products")) || [];
-
   const index = products.findIndex(p => p.id == id);
+
   if (index !== -1) {
     products[index] = product;
   } else {
@@ -70,75 +56,77 @@ function saveProduct() {
 }
 
 /* ==========================
-   EDITAR PRODUCTO
+   MOSTRAR ADMIN
+   ========================== */
+function displayAdminProducts() {
+  const products = JSON.parse(localStorage.getItem("products")) || [];
+  const container = document.getElementById("adminProductsList");
+
+  if (!container) return;
+
+  if (products.length === 0) {
+    container.innerHTML = "<p>No hay productos registrados</p>";
+    return;
+  }
+
+  container.innerHTML = products.map(product => `
+    <div class="admin-product-item">
+      <img src="${product.images[0]}" class="admin-product-thumb">
+      <div>
+        <h4>${product.name}</h4>
+        <p>${product.category}</p>
+        <p>$${product.price}</p>
+      </div>
+      <div>
+        <button onclick="editProduct('${product.id}')">✏️</button>
+        <button onclick="deleteProduct('${product.id}')">🗑️</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+/* ==========================
+   EDITAR / ELIMINAR
    ========================== */
 function editProduct(id) {
   const products = JSON.parse(localStorage.getItem("products")) || [];
-  const product = products.find(p => p.id === id);
-
+  const product = products.find(p => p.id == id);
   if (!product) return;
-
-  editingProductId = id;
 
   document.getElementById("productId").value = product.id;
   document.getElementById("productName").value = product.name;
   document.getElementById("productCategory").value = product.category;
   document.getElementById("productPrice").value = product.price;
   document.getElementById("productLink").value = product.link;
-
-  // Rellenar URLs Cloudinary
   document.getElementById("productImage1").value = product.images[0] || "";
   document.getElementById("productImage2").value = product.images[1] || "";
   document.getElementById("productImage3").value = product.images[2] || "";
-
-  document.getElementById("formTitle").textContent = "Editar Producto";
-  document
-    .querySelector(".admin-form-container")
-    .scrollIntoView({ behavior: "smooth" });
 }
 
-/* ==========================
-   ELIMINAR PRODUCTO
-   ========================== */
-function confirmDelete(id) {
-  if (!confirm("¿Estás seguro de que deseas eliminar este producto?")) return;
-
+function deleteProduct(id) {
+  if (!confirm("¿Eliminar producto?")) return;
   let products = JSON.parse(localStorage.getItem("products")) || [];
-  products = products.filter(p => p.id !== id);
+  products = products.filter(p => p.id != id);
   localStorage.setItem("products", JSON.stringify(products));
-
   displayAdminProducts();
-  alert("Producto eliminado exitosamente");
 }
 
 /* ==========================
-   CANCELAR / RESET
-   ========================== */
-function cancelEdit() {
-  resetForm();
-}
-
-function resetForm() {
-  editingProductId = null;
-  document.getElementById("productForm").reset();
-  document.getElementById("productId").value = "";
-  document.getElementById("formTitle").textContent = "Agregar Nuevo Producto";
-}
-
-/* ==========================
-   CARGAR CATEGORÍAS
+   CATEGORÍAS
    ========================== */
 function loadCategorySelect() {
   const select = document.getElementById("productCategory");
-  if (!select) return;
-
   select.innerHTML = `<option value="">Selecciona una categoría</option>`;
 
-  const categories = getCategories();
-  categories.forEach(category => {
+  getCategories().forEach(cat => {
     const option = document.createElement("option");
-    option.value = category;
-    option.textContent = category;
+    option.value = cat;
+    option.textContent = cat;
     select.appendChild(option);
   });
+}
+
+function resetForm() {
+  document.getElementById("productForm").reset();
+  document.getElementById("productId").value = "";
 }

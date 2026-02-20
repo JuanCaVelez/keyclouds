@@ -35,32 +35,6 @@ function getProducts() {
   }
 }
 
-function saveProducts(products) {
-  localStorage.setItem("products", JSON.stringify(products));
-}
-
-function addProduct(product) {
-  const products = getProducts();
-  products.push(product);
-  saveProducts(products);
-}
-
-function updateProduct(id, updatedProduct) {
-  const products = getProducts();
-  const index = products.findIndex(p => p.id === id);
-
-  if (index !== -1) {
-    products[index] = updatedProduct;
-    saveProducts(products);
-  }
-}
-
-function deleteProduct(id) {
-  const products = getProducts();
-  const filteredProducts = products.filter(p => p.id !== id);
-  saveProducts(filteredProducts);
-}
-
 /* ==========================
    FILTRO POR CATEGORÍA
    ========================== */
@@ -126,11 +100,9 @@ function displayProducts(productsToDisplay = null) {
 
       <div class="product-info">
         <h3>${product.name}</h3>
-        ${product.category ? `<p class="product-category">${product.category}</p>` : ""}
+        <p class="product-category">${product.category}</p>
         <p class="product-price">$${product.price}</p>
-        <a href="#"
-           onclick="buyProduct('${product.id}')"
-           class="btn-buy">
+        <a href="#" onclick="buyProduct('${product.id}')" class="btn-buy">
           <i class="fa-solid fa-cart-shopping"></i> Comprar
         </a>
       </div>
@@ -143,9 +115,8 @@ function displayProducts(productsToDisplay = null) {
    ========================== */
 function changeProductImage(productId, imageIndex, dotElement) {
   const products = getProducts();
-  const product = products.find(p => p.id === productId);
-
-  if (!product || !product.images[imageIndex]) return;
+  const product = products.find(p => p.id == productId);
+  if (!product) return;
 
   const img = document.getElementById(`product-img-${productId}`);
   if (!img) return;
@@ -165,7 +136,7 @@ function changeProductImage(productId, imageIndex, dotElement) {
    ========================== */
 function buyProduct(productId) {
   const products = getProducts();
-  const product = products.find(p => p.id === productId);
+  const product = products.find(p => p.id == productId);
   if (!product) return;
 
   const img = document.getElementById(`product-img-${productId}`);
@@ -183,47 +154,4 @@ Quiero comprar una vela:
 
   const url = `${product.link}?text=${encodeURIComponent(message)}`;
   window.open(url, "_blank");
-}
-
-/* ==========================
-   MOSTRAR PRODUCTOS (ADMIN)
-   ========================== */
-function displayAdminProducts() {
-  const products = getProducts();
-  const container = document.getElementById("adminProductsList");
-
-  if (!container) return;
-
-  if (products.length === 0) {
-    container.innerHTML =
-      '<p class="no-products-admin">No hay productos registrados aún.</p>';
-    return;
-  }
-
-  container.innerHTML = products.map(product => `
-    <div class="admin-product-item">
-      <img 
-        src="${product.images[0]}" 
-        alt="${product.name}" 
-        class="admin-product-thumb">
-
-      <div class="admin-product-details">
-        <h4>${product.name}</h4>
-        ${product.category ? `<p class="admin-product-category">${product.category}</p>` : ""}
-        <p class="admin-product-price">${product.price} $</p>
-        <a href="${product.link}" target="_blank" class="admin-product-link">
-          <i class="fa-solid fa-link"></i> Ver enlace
-        </a>
-      </div>
-
-      <div class="admin-product-actions">
-        <button onclick="editProduct('${product.id}')" class="btn-edit">
-          <i class="fa-solid fa-edit"></i>
-        </button>
-        <button onclick="confirmDelete('${product.id}')" class="btn-delete">
-          <i class="fa-solid fa-trash"></i>
-        </button>
-      </div>
-    </div>
-  `).join("");
 }
