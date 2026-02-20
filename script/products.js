@@ -85,7 +85,7 @@ function displayProducts(productsToDisplay = null) {
         <img 
           src="${product.images[0]}" 
           alt="${product.name}"
-          id="product-img-${product.id}"
+          id="product-img-_${product.id}"
           data-selected-color="0">
       </div>
 
@@ -139,7 +139,7 @@ function buyProduct(productId) {
   const product = products.find(p => p.id == productId);
   if (!product) return;
 
-  const img = document.getElementById(`product-img-${productId}`);
+  const img = document.getElementById(`product-img-_${productId}`);
   const selectedIndex = img?.dataset?.selectedColor ?? 0;
 
   const message = `
@@ -154,4 +154,4 @@ Quiero comprar una vela:
 
   const url = `${product.link}?text=${encodeURIComponent(message)}`;
   window.open(url, "_blank");
-}
+}d
