@@ -20,7 +20,7 @@ document.getElementById("productForm").addEventListener("submit", function (e) {
    GUARDAR PRODUCTO
    ========================== */
 function saveProduct() {
-  const id = document.getElementById("productId").value || Date.now();
+  const id = document.getElementById("productId").value || String(Date.now());
   const name = document.getElementById("productName").value.trim();
   const category = document.getElementById("productCategory").value;
   const price = document.getElementById("productPrice").value.trim();

@@ -115,7 +115,7 @@ function displayProducts(productsToDisplay = null) {
    ========================== */
 function changeProductImage(productId, imageIndex, dotElement) {
   const products = getProducts();
-  const product = products.find(p => p.id == productId);
+  const product = products.find(p => String(p.id) === String(productId));
   if (!product) return;
 
   const img = document.getElementById(`product-img-${productId}`);
@@ -136,7 +136,7 @@ function changeProductImage(productId, imageIndex, dotElement) {
    ========================== */
 function buyProduct(productId) {
   const products = getProducts();
-  const product = products.find(p => p.id == productId);
+  const product = products.find(p => String(p.id) === String(productId));
   if (!product) return;
 
   const img = document.getElementById(`product-img-_${productId}`);
