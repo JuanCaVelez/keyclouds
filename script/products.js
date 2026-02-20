@@ -64,7 +64,10 @@ function deleteProduct(id) {
 /* ==========================
    FILTRO POR CATEGORÍA
    ========================== */
+let currentSelectedCategory = "all";
+
 function filterByCategory(category) {
+  currentSelectedCategory = category;
   const products = getProducts();
 
   if (category === "all") {
@@ -108,7 +111,8 @@ function displayProducts(productsToDisplay = null) {
         <img 
           src="${product.images[0]}" 
           alt="${product.name}"
-          id="product-img-${product.id}">
+          id="product-img-${product.id}"
+          data-selected-color="0">
       </div>
 
       <div class="color-dots">
@@ -124,7 +128,9 @@ function displayProducts(productsToDisplay = null) {
         <h3>${product.name}</h3>
         ${product.category ? `<p class="product-category">${product.category}</p>` : ""}
         <p class="product-price">$${product.price}</p>
-        <a href="${product.link}" target="_blank" class="btn-buy">
+        <a href="#"
+           onclick="buyProduct('${product.id}')"
+           class="btn-buy">
           <i class="fa-solid fa-cart-shopping"></i> Comprar
         </a>
       </div>
@@ -133,7 +139,7 @@ function displayProducts(productsToDisplay = null) {
 }
 
 /* ==========================
-   CAMBIAR IMAGEN POR COLOR
+   CAMBIAR IMAGEN / COLOR
    ========================== */
 function changeProductImage(productId, imageIndex, dotElement) {
   const products = getProducts();
@@ -144,15 +150,39 @@ function changeProductImage(productId, imageIndex, dotElement) {
   const img = document.getElementById(`product-img-${productId}`);
   if (!img) return;
 
-  // Cambiar imagen
   img.src = product.images[imageIndex];
+  img.dataset.selectedColor = imageIndex;
 
-  // Actualizar dot activo
   dotElement.parentElement
     .querySelectorAll(".color-dot")
     .forEach(dot => dot.classList.remove("active"));
 
   dotElement.classList.add("active");
+}
+
+/* ==========================
+   COMPRAR POR WHATSAPP
+   ========================== */
+function buyProduct(productId) {
+  const products = getProducts();
+  const product = products.find(p => p.id === productId);
+  if (!product) return;
+
+  const img = document.getElementById(`product-img-${productId}`);
+  const selectedIndex = img?.dataset?.selectedColor ?? 0;
+
+  const message = `
+Hola 👋
+Quiero comprar una vela:
+
+🕯️ Producto: ${product.name}
+🎨 Color: ${parseInt(selectedIndex) + 1}
+💰 Precio: $${product.price}
+📂 Categoría: ${product.category}
+  `.trim();
+
+  const url = `${product.link}?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
 }
 
 /* ==========================

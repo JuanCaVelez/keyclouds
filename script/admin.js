@@ -9,27 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ==========================
-   PREVIEW DE IMÁGENES (HASTA 3)
-   ========================== */
-document.getElementById("productImage").addEventListener("change", function (e) {
-  const files = Array.from(e.target.files).slice(0, 3);
-  const preview = document.getElementById("imagePreview");
-  preview.innerHTML = "";
-
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = function (event) {
-      preview.innerHTML += `
-        <img src="${event.target.result}"
-             alt="Preview"
-             style="width:80px;height:80px;object-fit:cover;margin:5px;border-radius:6px;">
-      `;
-    };
-    reader.readAsDataURL(file);
-  });
-});
-
-/* ==========================
    ENVÍO DEL FORMULARIO
    ========================== */
 document.getElementById("productForm").addEventListener("submit", function (e) {
@@ -38,134 +17,83 @@ document.getElementById("productForm").addEventListener("submit", function (e) {
 });
 
 /* ==========================
-   GUARDAR PRODUCTO
+   GUARDAR / EDITAR PRODUCTO
    ========================== */
 function saveProduct() {
-  const nameElement = document.getElementById("productName");
-  const priceElement = document.getElementById("productPrice");
-  const categoryElement = document.getElementById("productCategory");
-  const linkElement = document.getElementById("productLink");
-  const imageElement = document.getElementById("productImage");
-  const productIdElement = document.getElementById("productId");
+  const id = document.getElementById("productId").value || Date.now();
+  const name = document.getElementById("productName").value.trim();
+  const category = document.getElementById("productCategory").value;
+  const price = document.getElementById("productPrice").value.trim();
+  const link = document.getElementById("productLink").value.trim();
 
-  if (
-    !nameElement ||
-    !priceElement ||
-    !categoryElement ||
-    !linkElement ||
-    !imageElement ||
-    !productIdElement
-  ) {
-    alert("Por favor completa todos los campos obligatorios");
+  // URLs Cloudinary (hasta 3 colores)
+  const image1 = document.getElementById("productImage1").value.trim();
+  const image2 = document.getElementById("productImage2").value.trim();
+  const image3 = document.getElementById("productImage3").value.trim();
+
+  const images = [image1, image2, image3].filter(img => img !== "");
+
+  // Validaciones
+  if (!name || !category || !price || !link) {
+    alert("Completa todos los campos obligatorios");
     return;
   }
 
-  const name = nameElement.value.trim();
-  const price = priceElement.value.trim();
-  const category = categoryElement.value;
-  const link = linkElement.value.trim();
-  const imageFiles = Array.from(imageElement.files).slice(0, 3);
-
-  if (!name || !price || !category || !link) {
-    alert("Por favor completa todos los campos obligatorios");
+  if (images.length === 0) {
+    alert("Debes agregar al menos una imagen de Cloudinary");
     return;
   }
 
-  /* ==========================
-     EDITAR SIN NUEVAS IMÁGENES
-     ========================== */
-  if (editingProductId && imageFiles.length === 0) {
-    const products = getProducts();
-    const existingProduct = products.find(p => p.id === editingProductId);
+  const product = {
+    id,
+    name,
+    category,
+    price,
+    images,
+    link
+  };
 
-    const product = {
-      id: editingProductId,
-      name,
-      price,
-      category,
-      images: existingProduct.images,
-      link,
-    };
+  let products = JSON.parse(localStorage.getItem("products")) || [];
 
-    updateProduct(editingProductId, product);
-    resetForm();
-    displayAdminProducts();
-    return;
+  const index = products.findIndex(p => p.id == id);
+  if (index !== -1) {
+    products[index] = product;
+  } else {
+    products.push(product);
   }
 
-  /* ==========================
-     GUARDAR CON NUEVAS IMÁGENES
-     ========================== */
-  if (imageFiles.length > 0) {
-    const images = [];
-    let loaded = 0;
+  localStorage.setItem("products", JSON.stringify(products));
 
-    imageFiles.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        images.push(event.target.result);
-        loaded++;
-
-        if (loaded === imageFiles.length) {
-          const product = {
-            id: editingProductId || Date.now().toString(),
-            name,
-            price,
-            category,
-            images,
-            link,
-          };
-
-          if (editingProductId) {
-            updateProduct(editingProductId, product);
-            alert("Producto actualizado exitosamente");
-          } else {
-            addProduct(product);
-            alert("Producto agregado exitosamente");
-          }
-
-          resetForm();
-          displayAdminProducts();
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-  } else if (!editingProductId) {
-    alert("Por favor selecciona al menos una imagen");
-  }
+  resetForm();
+  displayAdminProducts();
+  alert("Producto guardado correctamente ✅");
 }
 
 /* ==========================
    EDITAR PRODUCTO
    ========================== */
 function editProduct(id) {
-  const products = getProducts();
+  const products = JSON.parse(localStorage.getItem("products")) || [];
   const product = products.find(p => p.id === id);
 
   if (!product) return;
 
   editingProductId = id;
-  document.getElementById("productId").value = id;
+
+  document.getElementById("productId").value = product.id;
   document.getElementById("productName").value = product.name;
-  document.getElementById("productPrice").value = product.price;
   document.getElementById("productCategory").value = product.category;
+  document.getElementById("productPrice").value = product.price;
   document.getElementById("productLink").value = product.link;
 
-  const preview = document.getElementById("imagePreview");
-  preview.innerHTML = "";
-
-  if (product.images) {
-    product.images.forEach(img => {
-      preview.innerHTML += `
-        <img src="${img}"
-             alt="Preview"
-             style="width:80px;height:80px;object-fit:cover;margin:5px;border-radius:6px;">
-      `;
-    });
-  }
+  // Rellenar URLs Cloudinary
+  document.getElementById("productImage1").value = product.images[0] || "";
+  document.getElementById("productImage2").value = product.images[1] || "";
+  document.getElementById("productImage3").value = product.images[2] || "";
 
   document.getElementById("formTitle").textContent = "Editar Producto";
-  document.querySelector(".admin-form-container")
+  document
+    .querySelector(".admin-form-container")
     .scrollIntoView({ behavior: "smooth" });
 }
 
@@ -173,11 +101,14 @@ function editProduct(id) {
    ELIMINAR PRODUCTO
    ========================== */
 function confirmDelete(id) {
-  if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
-    deleteProduct(id);
-    displayAdminProducts();
-    alert("Producto eliminado exitosamente");
-  }
+  if (!confirm("¿Estás seguro de que deseas eliminar este producto?")) return;
+
+  let products = JSON.parse(localStorage.getItem("products")) || [];
+  products = products.filter(p => p.id !== id);
+  localStorage.setItem("products", JSON.stringify(products));
+
+  displayAdminProducts();
+  alert("Producto eliminado exitosamente");
 }
 
 /* ==========================
@@ -191,7 +122,6 @@ function resetForm() {
   editingProductId = null;
   document.getElementById("productForm").reset();
   document.getElementById("productId").value = "";
-  document.getElementById("imagePreview").innerHTML = "";
   document.getElementById("formTitle").textContent = "Agregar Nuevo Producto";
 }
 
