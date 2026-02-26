@@ -1,3 +1,15 @@
+import { db } from "./firebase.js";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
 /* ==========================
    CATEGORÍAS
    ========================== */
@@ -12,52 +24,44 @@ function getCategories() {
 }
 
 /* ==========================
-   PRODUCTOS / STORAGE
+   PRODUCTOS / FIRESTORE
    ========================== */
-function getProducts() {
+async function getProducts() {
   try {
-    const products = localStorage.getItem("products");
-    const parsed = products ? JSON.parse(products) : [];
-
-    return parsed.filter(p =>
-      p &&
-      typeof p === "object" &&
-      p.id &&
-      p.name &&
-      p.price &&
-      p.link &&
-      Array.isArray(p.images) &&
-      p.images.length > 0
-    );
+    const q = query(collection(db, "products"), orderBy("name"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
   } catch (e) {
     console.error("Error leyendo productos:", e);
     return [];
   }
 }
 
-function saveProducts(products) {
-  localStorage.setItem("products", JSON.stringify(products));
-}
-
-function addProduct(product) {
-  const products = getProducts();
-  products.push(product);
-  saveProducts(products);
-}
-
-function updateProduct(id, updatedProduct) {
-  const products = getProducts();
-  const index = products.findIndex(p => String(p.id) === String(id));
-  if (index !== -1) {
-    products[index] = updatedProduct;
-    saveProducts(products);
+async function addProduct(product) {
+  try {
+    const docRef = await addDoc(collection(db, "products"), product);
+    return docRef.id;
+  } catch (e) {
+    console.error("Error agregando producto:", e);
+    return null;
   }
 }
 
-function deleteProduct(id) {
-  const products = getProducts();
-  const filtered = products.filter(p => String(p.id) !== String(id));
-  saveProducts(filtered);
+async function updateProduct(id, updatedProduct) {
+  try {
+    const ref = doc(db, "products", id);
+    await updateDoc(ref, updatedProduct);
+  } catch (e) {
+    console.error("Error actualizando producto:", e);
+  }
+}
+
+async function deleteProduct(id) {
+  try {
+    await deleteDoc(doc(db, "products", id));
+  } catch (e) {
+    console.error("Error eliminando producto:", e);
+  }
 }
 
 /* ==========================
@@ -65,9 +69,9 @@ function deleteProduct(id) {
    ========================== */
 let currentSelectedCategory = "all";
 
-function filterByCategory(category) {
+async function filterByCategory(category) {
   currentSelectedCategory = category;
-  const products = getProducts();
+  const products = await getProducts();
 
   if (category === "all") {
     displayProducts(products);
@@ -80,8 +84,8 @@ function filterByCategory(category) {
 /* ==========================
    MOSTRAR PRODUCTOS (INDEX)
    ========================== */
-function displayProducts(productsToDisplay = null) {
-  const products = productsToDisplay || getProducts();
+async function displayProducts(productsToDisplay = null) {
+  const products = productsToDisplay || await getProducts();
   const grid = document.getElementById("productosGrid");
   const noProducts = document.getElementById("noProducts");
 
@@ -133,13 +137,16 @@ function displayProducts(productsToDisplay = null) {
       </div>
     </div>
   `).join("");
+
+  // Guardar productos en memoria para acceso rápido
+  window._cachedProducts = products;
 }
 
 /* ==========================
    CAMBIAR IMAGEN / COLOR
    ========================== */
 function changeProductImage(productId, imageIndex, dotElement) {
-  const products = getProducts();
+  const products = window._cachedProducts || [];
   const product = products.find(p => String(p.id) === String(productId));
   if (!product || !product.images[imageIndex]) return;
 
@@ -160,7 +167,7 @@ function changeProductImage(productId, imageIndex, dotElement) {
    COMPRAR POR WHATSAPP
    ========================== */
 function buyProduct(productId) {
-  const products = getProducts();
+  const products = window._cachedProducts || [];
   const product = products.find(p => String(p.id) === String(productId));
   if (!product) return;
 
@@ -184,8 +191,8 @@ Quiero comprar una vela:
 /* ==========================
    MOSTRAR PRODUCTOS (ADMIN)
    ========================== */
-function displayAdminProducts() {
-  const products = getProducts();
+async function displayAdminProducts() {
+  const products = await getProducts();
   const container = document.getElementById("adminProductsList");
 
   if (!container) return;
@@ -222,4 +229,19 @@ function displayAdminProducts() {
       </div>
     </div>
   `).join("");
+
+  window._cachedProducts = products;
 }
+
+export {
+  getCategories,
+  getProducts,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+  filterByCategory,
+  displayProducts,
+  displayAdminProducts,
+  changeProductImage,
+  buyProduct
+};

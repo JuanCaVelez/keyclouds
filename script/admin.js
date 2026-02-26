@@ -1,3 +1,12 @@
+import {
+  getCategories,
+  getProducts,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+  displayAdminProducts
+} from "./products.js";
+
 let editingProductId = null;
 
 /* ==========================
@@ -9,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ==========================
-   FORMULARIO
+   ENVÍO DEL FORMULARIO
    ========================== */
 document.getElementById("productForm").addEventListener("submit", function (e) {
   e.preventDefault();
@@ -17,10 +26,10 @@ document.getElementById("productForm").addEventListener("submit", function (e) {
 });
 
 /* ==========================
-   GUARDAR PRODUCTO
+   GUARDAR / EDITAR PRODUCTO
    ========================== */
-function saveProduct() {
-  const id = document.getElementById("productId").value || String(Date.now());
+async function saveProduct() {
+  const id = document.getElementById("productId").value;
   const name = document.getElementById("productName").value.trim();
   const category = document.getElementById("productCategory").value;
   const price = document.getElementById("productPrice").value.trim();
@@ -30,103 +39,99 @@ function saveProduct() {
   const image2 = document.getElementById("productImage2").value.trim();
   const image3 = document.getElementById("productImage3").value.trim();
 
-  const images = [image1, image2, image3].filter(Boolean);
+  const images = [image1, image2, image3].filter(img => img !== "");
 
-  if (!name || !category || !price || !link || images.length === 0) {
+  if (!name || !category || !price || !link) {
     alert("Completa todos los campos obligatorios");
     return;
   }
 
-  const product = { id, name, category, price, images, link };
-
-  let products = JSON.parse(localStorage.getItem("products")) || [];
-  const index = products.findIndex(p => p.id == id);
-
-  if (index !== -1) {
-    products[index] = product;
-  } else {
-    products.push(product);
+  if (images.length === 0) {
+    alert("Debes agregar al menos una imagen de Cloudinary");
+    return;
   }
 
-  localStorage.setItem("products", JSON.stringify(products));
+  const product = { name, category, price, images, link };
+
+  if (id) {
+    await updateProduct(id, product);
+  } else {
+    await addProduct(product);
+  }
 
   resetForm();
-  displayAdminProducts();
+  await displayAdminProducts();
   alert("Producto guardado correctamente ✅");
 }
 
 /* ==========================
-   MOSTRAR ADMIN
+   EDITAR PRODUCTO
    ========================== */
-function displayAdminProducts() {
-  const products = JSON.parse(localStorage.getItem("products")) || [];
-  const container = document.getElementById("adminProductsList");
-
-  if (!container) return;
-
-  if (products.length === 0) {
-    container.innerHTML = "<p>No hay productos registrados</p>";
-    return;
-  }
-
-  container.innerHTML = products.map(product => `
-    <div class="admin-product-item">
-      <img src="${product.images[0]}" class="admin-product-thumb">
-      <div>
-        <h4>${product.name}</h4>
-        <p>${product.category}</p>
-        <p>$${product.price}</p>
-      </div>
-      <div>
-        <button onclick="editProduct('${product.id}')">✏️</button>
-        <button onclick="deleteProduct('${product.id}')">🗑️</button>
-      </div>
-    </div>
-  `).join("");
-}
-
-/* ==========================
-   EDITAR / ELIMINAR
-   ========================== */
-function editProduct(id) {
-  const products = JSON.parse(localStorage.getItem("products")) || [];
-  const product = products.find(p => p.id == id);
+async function editProduct(id) {
+  const products = await getProducts();
+  const product = products.find(p => p.id === id);
   if (!product) return;
+
+  editingProductId = id;
 
   document.getElementById("productId").value = product.id;
   document.getElementById("productName").value = product.name;
   document.getElementById("productCategory").value = product.category;
   document.getElementById("productPrice").value = product.price;
   document.getElementById("productLink").value = product.link;
+
   document.getElementById("productImage1").value = product.images[0] || "";
   document.getElementById("productImage2").value = product.images[1] || "";
   document.getElementById("productImage3").value = product.images[2] || "";
-}
 
-function deleteProduct(id) {
-  if (!confirm("¿Eliminar producto?")) return;
-  let products = JSON.parse(localStorage.getItem("products")) || [];
-  products = products.filter(p => p.id != id);
-  localStorage.setItem("products", JSON.stringify(products));
-  displayAdminProducts();
+  document.getElementById("formTitle").textContent = "Editar Producto";
+  document.querySelector(".admin-form-container").scrollIntoView({ behavior: "smooth" });
 }
 
 /* ==========================
-   CATEGORÍAS
+   ELIMINAR PRODUCTO
+   ========================== */
+async function confirmDelete(id) {
+  if (!confirm("¿Estás seguro de que deseas eliminar este producto?")) return;
+
+  await deleteProduct(id);
+  await displayAdminProducts();
+  alert("Producto eliminado exitosamente");
+}
+
+/* ==========================
+   CANCELAR / RESET
+   ========================== */
+function cancelEdit() {
+  resetForm();
+}
+
+function resetForm() {
+  editingProductId = null;
+  document.getElementById("productForm").reset();
+  document.getElementById("productId").value = "";
+  document.getElementById("formTitle").textContent = "Agregar Nuevo Producto";
+}
+
+/* ==========================
+   CARGAR CATEGORÍAS
    ========================== */
 function loadCategorySelect() {
   const select = document.getElementById("productCategory");
+  if (!select) return;
+
   select.innerHTML = `<option value="">Selecciona una categoría</option>`;
 
-  getCategories().forEach(cat => {
+  const categories = getCategories();
+  categories.forEach(category => {
     const option = document.createElement("option");
-    option.value = cat;
-    option.textContent = cat;
+    option.value = category;
+    option.textContent = category;
     select.appendChild(option);
   });
 }
 
-function resetForm() {
-  document.getElementById("productForm").reset();
-  document.getElementById("productId").value = "";
-}
+// Exponer funciones al HTML
+window.editProduct = editProduct;
+window.confirmDelete = confirmDelete;
+window.cancelEdit = cancelEdit;

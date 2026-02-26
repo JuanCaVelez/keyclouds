@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
     <title>KeyClouds</title>
@@ -23,7 +23,7 @@
                     Productos <i class="fa-solid fa-chevron-down"></i>
                 </a>
                 <ul class="dropdown-menu" id="navbarCategoryMenu">
-                    <li><a href="#productos" onclick="selectCategory('all', 'Todas las categorías')">Todas las categorías</a></li>
+                    <li><a href="#productos" onclick="selectCategory('all', 'Todas las categorías'); return false;">Todas las categorías</a></li>
                 </ul>
             </li>
         </ul>
@@ -43,9 +43,7 @@
 
     <section id="productos">
         <h2 id="productosTitle">Nuestros productos</h2>
-        
-        <div id="productosGrid" class="products-grid">
-        </div>
+        <div id="productosGrid" class="products-grid"></div>
         <div id="noProducts" class="no-products" style="display: none;">
             <p id="noProductsText"></p>
         </div>
@@ -68,11 +66,23 @@
         </div>
     </footer>
 
-    <script src="script/products.js"></script>
-    <script>
+    <script type="module">
+        import {
+            getCategories,
+            getProducts,
+            filterByCategory,
+            displayProducts,
+            changeProductImage,
+            buyProduct
+        } from "./script/products.js";
+
+        // Exponer funciones al HTML (necesario para onclick en templates)
+        window.changeProductImage = changeProductImage;
+        window.buyProduct = buyProduct;
+
         // Inicializar página
-        window.onload = function() {
-            displayProducts();
+        window.onload = async function() {
+            await displayProducts();
             loadNavbarCategoryMenu();
         };
 
@@ -81,8 +91,7 @@
             const menu = document.getElementById('navbarCategoryMenu');
             if (!menu) return;
             const categories = getCategories();
-            
-            // Mantener "Todas las categorías"
+
             let html = `
                 <li>
                     <a href="#productos" onclick="selectCategory('all', 'Todas las categorías'); return false;">
@@ -90,8 +99,7 @@
                     </a>
                 </li>
             `;
-            
-            // Agregar categorías únicas
+
             categories.forEach(category => {
                 html += `
                     <li>
@@ -101,49 +109,46 @@
                     </li>
                 `;
             });
-            
+
             menu.innerHTML = html;
         }
 
         // Seleccionar categoría
-        function selectCategory(category, displayName) {
-            currentSelectedCategory = category;
-
+        window.selectCategory = async function(category, displayName) {
             const title = document.getElementById('productosTitle');
-            if(title) {
-                title.textContent = 
+            if (title) {
+                title.textContent =
                     category === "all"
                         ? "Nuestros productos"
                         : `Categoría: ${displayName}`;
             }
 
-            filterByCategory(category);
-
+            await filterByCategory(category);
             document.getElementById("productos").scrollIntoView({ behavior: 'smooth' });
-        }
+        };
 
         // Búsqueda de productos
-        function searchProducts() {
+        window.searchProducts = async function() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-            const products = getProducts();
-            
+            const products = await getProducts();
+
             if (!searchTerm) {
-                displayProducts();
+                displayProducts(products);
                 return;
             }
-            
-            const filtered = products.filter(product => 
+
+            const filtered = products.filter(product =>
                 product.name.toLowerCase().includes(searchTerm) ||
                 (product.category && product.category.toLowerCase().includes(searchTerm))
             );
-            
+
             displayProducts(filtered);
-        }
+        };
 
         // Buscar al presionar Enter
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                searchProducts();
+                window.searchProducts();
             }
         });
     </script>
