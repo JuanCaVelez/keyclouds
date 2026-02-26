@@ -35,11 +35,8 @@ async function saveProduct() {
   const price = document.getElementById("productPrice").value.trim();
   const link = document.getElementById("productLink").value.trim();
 
-  const image1 = document.getElementById("productImage1").value.trim();
-  const image2 = document.getElementById("productImage2").value.trim();
-  const image3 = document.getElementById("productImage3").value.trim();
-
-  const images = [image1, image2, image3].filter(img => img !== "");
+  // Obtener imágenes desde window.productImages
+  const images = (window.productImages || []).filter(url => url !== "");
 
   if (!name || !category || !price || !link) {
     alert("Completa todos los campos obligatorios");
@@ -47,7 +44,7 @@ async function saveProduct() {
   }
 
   if (images.length === 0) {
-    alert("Debes agregar al menos una imagen de Cloudinary");
+    alert("Debes subir al menos una imagen del producto");
     return;
   }
 
@@ -80,9 +77,13 @@ async function editProduct(id) {
   document.getElementById("productPrice").value = product.price;
   document.getElementById("productLink").value = product.link;
 
-  document.getElementById("productImage1").value = product.images[0] || "";
-  document.getElementById("productImage2").value = product.images[1] || "";
-  document.getElementById("productImage3").value = product.images[2] || "";
+  // Cargar imágenes existentes en los slots
+  window.productImages = ['', '', ''];
+  product.images.forEach((url, index) => {
+    if (index < 3) {
+      window.setImageSlot(index, url);
+    }
+  });
 
   document.getElementById("formTitle").textContent = "Editar Producto";
   document.querySelector(".admin-form-container").scrollIntoView({ behavior: "smooth" });
@@ -93,7 +94,6 @@ async function editProduct(id) {
    ========================== */
 async function confirmDelete(id) {
   if (!confirm("¿Estás seguro de que deseas eliminar este producto?")) return;
-
   await deleteProduct(id);
   await displayAdminProducts();
   alert("Producto eliminado exitosamente");
@@ -111,6 +111,12 @@ function resetForm() {
   document.getElementById("productForm").reset();
   document.getElementById("productId").value = "";
   document.getElementById("formTitle").textContent = "Agregar Nuevo Producto";
+
+  // Limpiar slots de imágenes
+  window.productImages = ['', '', ''];
+  [0, 1, 2].forEach(i => {
+    if (window.removeImage) window.removeImage(i);
+  });
 }
 
 /* ==========================

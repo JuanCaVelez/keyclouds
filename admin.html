@@ -6,6 +6,114 @@
     <title>Admin - KeyClouds</title>
     <link rel="stylesheet" href="styles/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .image-upload-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .image-slot {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            transition: border-color 0.3s;
+        }
+
+        .image-slot.has-image {
+            border-color: #836b9d;
+            border-style: solid;
+        }
+
+        .image-slot-preview {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .image-slot.has-image .image-slot-preview {
+            display: block;
+        }
+
+        .image-slot-placeholder {
+            width: 70px;
+            height: 70px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 24px;
+        }
+
+        .image-slot.has-image .image-slot-placeholder {
+            display: none;
+        }
+
+        .image-slot-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .image-slot-label {
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .image-slot-url {
+            font-size: 12px;
+            color: #888;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .btn-upload {
+            background-color: #836b9d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: background-color 0.3s;
+        }
+
+        .btn-upload:hover {
+            background-color: #6a5580;
+        }
+
+        .btn-remove-image {
+            background: none;
+            border: none;
+            color: #f44336;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+            transition: transform 0.2s;
+        }
+
+        .btn-remove-image:hover {
+            transform: scale(1.2);
+        }
+
+        .upload-hint {
+            font-size: 13px;
+            color: #666;
+            margin-top: 4px;
+        }
+    </style>
 </head>
 
 <body>
@@ -14,13 +122,11 @@
             <div class="logo">
                 <h1>KeyClouds</h1>
             </div>
-
             <ul class="nav-links">
                 <li><a href="index.html">Inicio</a></li>
                 <li><a href="index.html#productos">Productos</a></li>
                 <li><a href="admin.html" class="active">Admin</a></li>
             </ul>
-
             <div class="admin-user-menu">
                 <span class="admin-username">
                     <i class="fa-solid fa-user-shield"></i>
@@ -37,7 +143,6 @@
     <section class="admin-section">
         <h2>Panel de Administración</h2>
 
-        <!-- ===== FORMULARIO ===== -->
         <div class="admin-form-container">
             <h3 id="formTitle">Agregar Nuevo Producto</h3>
 
@@ -62,16 +167,62 @@
                     <input type="text" id="productPrice" required placeholder="15.00">
                 </div>
 
+                <!-- IMÁGENES CON UPLOAD -->
                 <div class="form-group">
-                    <label>Imágenes del producto (Cloudinary)</label>
-                    <input type="url" id="productImage1" required placeholder="URL imagen color 1">
-                    <input type="url" id="productImage2" placeholder="URL imagen color 2">
-                    <input type="url" id="productImage3" placeholder="URL imagen color 3">
-                    <small>Pega las URLs de Cloudinary. Máximo 3 imágenes (colores).</small>
+                    <label>Imágenes del producto * (máximo 3 colores)</label>
+                    <div class="image-upload-group">
+
+                        <div class="image-slot" id="slot-0">
+                            <img class="image-slot-preview" id="preview-0" src="" alt="Color 1">
+                            <div class="image-slot-placeholder"><i class="fa-solid fa-image"></i></div>
+                            <div class="image-slot-info">
+                                <span class="image-slot-label">Color 1 *</span>
+                                <span class="image-slot-url" id="url-label-0">Sin imagen</span>
+                            </div>
+                            <button type="button" class="btn-upload" onclick="openUploadWidget(0)">
+                                <i class="fa-solid fa-upload"></i> Subir
+                            </button>
+                            <button type="button" class="btn-remove-image" onclick="removeImage(0)">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="image-slot" id="slot-1">
+                            <img class="image-slot-preview" id="preview-1" src="" alt="Color 2">
+                            <div class="image-slot-placeholder"><i class="fa-solid fa-image"></i></div>
+                            <div class="image-slot-info">
+                                <span class="image-slot-label">Color 2</span>
+                                <span class="image-slot-url" id="url-label-1">Sin imagen</span>
+                            </div>
+                            <button type="button" class="btn-upload" onclick="openUploadWidget(1)">
+                                <i class="fa-solid fa-upload"></i> Subir
+                            </button>
+                            <button type="button" class="btn-remove-image" onclick="removeImage(1)">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="image-slot" id="slot-2">
+                            <img class="image-slot-preview" id="preview-2" src="" alt="Color 3">
+                            <div class="image-slot-placeholder"><i class="fa-solid fa-image"></i></div>
+                            <div class="image-slot-info">
+                                <span class="image-slot-label">Color 3</span>
+                                <span class="image-slot-url" id="url-label-2">Sin imagen</span>
+                            </div>
+                            <button type="button" class="btn-upload" onclick="openUploadWidget(2)">
+                                <i class="fa-solid fa-upload"></i> Subir
+                            </button>
+                            <button type="button" class="btn-remove-image" onclick="removeImage(2)">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                    <small class="upload-hint">Sube una imagen por cada color disponible del producto.</small>
                 </div>
 
                 <div class="form-group">
-                    <label for="productLink">Enlace de Compra *</label>
+                    <label for="productLink">Enlace de Compra (WhatsApp) *</label>
                     <input type="url" id="productLink" required placeholder="https://wa.me/...">
                 </div>
 
@@ -86,26 +237,21 @@
             </form>
         </div>
 
-        <!-- ===== LISTA DE PRODUCTOS ===== -->
         <div class="admin-products-list">
             <h3>Productos Registrados</h3>
-            <div id="adminProductsList">
-                <!-- Renderizado por JS -->
-            </div>
+            <div id="adminProductsList"></div>
         </div>
     </section>
 
+    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
     <script src="script/auth.js"></script>
-
     <script type="module">
         import "./script/admin.js";
     </script>
 
     <script>
-        // Proteger página
         requireAuth();
 
-        // Mostrar usuario
         const session = getSessionData();
         if (session) {
             document.getElementById('currentUser').textContent = session.username;
@@ -117,7 +263,57 @@
             }
         }
 
-        // Advertencia sesión
+        // URLs de imágenes en memoria
+        window.productImages = ['', '', ''];
+
+        // Abrir Cloudinary Upload Widget
+        window.openUploadWidget = function(slotIndex) {
+            const widget = cloudinary.createUploadWidget(
+                {
+                    cloudName: 'images-tienda',
+                    uploadPreset: 'keyclouds_preset',
+                    multiple: false,
+                    maxFiles: 1,
+                    resourceType: 'image',
+                    clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+                    maxFileSize: 5000000,
+                    cropping: false,
+                    sources: ['local', 'camera'],
+                    language: 'es'
+                },
+                (error, result) => {
+                    if (!error && result && result.event === 'success') {
+                        const url = result.info.secure_url;
+                        setImageSlot(slotIndex, url);
+                        widget.close();
+                    }
+                }
+            );
+            widget.open();
+        };
+
+        // Asignar imagen a un slot
+        window.setImageSlot = function(index, url) {
+            window.productImages[index] = url;
+            const slot = document.getElementById(`slot-${index}`);
+            const preview = document.getElementById(`preview-${index}`);
+            const urlLabel = document.getElementById(`url-label-${index}`);
+            preview.src = url;
+            urlLabel.textContent = url.split('/').pop();
+            slot.classList.add('has-image');
+        };
+
+        // Quitar imagen de un slot
+        window.removeImage = function(index) {
+            window.productImages[index] = '';
+            const slot = document.getElementById(`slot-${index}`);
+            const preview = document.getElementById(`preview-${index}`);
+            const urlLabel = document.getElementById(`url-label-${index}`);
+            preview.src = '';
+            urlLabel.textContent = 'Sin imagen';
+            slot.classList.remove('has-image');
+        };
+
         setInterval(() => {
             const timeRemaining = getSessionTimeRemaining();
             if (timeRemaining <= 5 && timeRemaining > 0) {
