@@ -188,7 +188,7 @@ body {
 section {
     text-align: center;
     padding: 60px 40px 60px;
-    margin-bottom: 120px; /* espacio para footer fijo */
+    margin-bottom: 120px;
 }
 
 section h2 {
@@ -338,7 +338,6 @@ footer {
         gap: 10px;
     }
 
-    /* Logo a la izquierda, admin + búsqueda a la derecha */
     .logo {
         flex: 0 0 auto;
     }
@@ -380,7 +379,7 @@ footer {
 /* ========== MÓVILES (max 480px) ========== */
 @media (max-width: 480px) {
 
-    /* HEADER compacto de una línea */
+    /* HEADER compacto */
     header {
         position: sticky;
         top: 0;
@@ -393,54 +392,67 @@ footer {
     }
 
     .navbar {
-        display: grid;
-        grid-template-columns: 1fr auto auto;
-        grid-template-rows: auto auto;
-        align-items: center;
-        gap: 8px 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
     }
 
-    /* Fila 1: logo | admin | búsqueda */
+    /* Fila 1: logo | admin | búsqueda en una línea */
+    .navbar-top-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    /* Logo */
     .logo {
-        grid-column: 1;
-        grid-row: 1;
+        order: 1;
+        flex: 1;
     }
 
     .logo h1 {
         font-size: 26px;
     }
 
+    /* Admin icon */
     .admin-access {
-        grid-column: 2;
-        grid-row: 1;
+        order: 2;
         margin-right: 0;
+        flex: 0 0 auto;
     }
 
+    /* Barra de búsqueda completa en móvil — visible y centrada */
     .search-box {
-        grid-column: 3;
-        grid-row: 1;
+        order: 3;
+        width: 100%;
         margin-right: 0;
+        justify-content: center;
     }
 
-    /* Ocultar input de búsqueda — solo ícono en móvil */
     .search-box input {
-        display: none;
+        display: block; /* VISIBLE en móvil */
+        width: 100%;
+        max-width: 300px;
+        font-size: 14px;
+        padding: 8px 14px;
     }
 
     .search-box button {
-        font-size: 22px;
-        padding: 4px;
+        font-size: 18px;
+        flex-shrink: 0;
     }
 
-    /* Fila 2: nav-links centrados */
+    /* Nav links centrados */
     .nav-links {
-        grid-column: 1 / -1;
-        grid-row: 2;
+        order: 4;
         display: flex;
         justify-content: center;
         gap: 24px;
         flex-wrap: wrap;
         padding: 4px 0 0;
+        width: 100%;
     }
 
     .nav-links a {
@@ -454,7 +466,6 @@ footer {
         text-align: center;
     }
 
-    /* Eliminar padding-top del body ya que el header es sticky */
     body {
         padding-top: 0;
         min-height: 100vh;
@@ -477,33 +488,60 @@ footer {
         gap: 12px;
     }
 
-    /* CARD más compacta */
+    /* CARD centrada */
     .product-card {
         padding: 12px;
         width: 100%;
         max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
     }
 
     .product-image {
         height: 120px;
+        width: 100%;
+        justify-content: center;
     }
 
     .product-image img {
         width: 90px;
         height: 90px;
+        display: block;
+        margin: 0 auto;
     }
 
     .product-card h3 {
         font-size: 14px;
         margin: 6px 0 2px;
+        text-align: center;
+        width: 100%;
     }
 
     .product-category {
         font-size: 12px;
+        text-align: center;
+        width: 100%;
     }
 
     .product-price {
         font-size: 14px;
+        text-align: center;
+        width: 100%;
+    }
+
+    .color-dots {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .product-info {
+        width: 100%;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .btn-buy {
