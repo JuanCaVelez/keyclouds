@@ -25,6 +25,9 @@ header {
     background-color: #836b9d;
     padding: 20px 40px;
     z-index: 1000;
+    height: 100px;
+    display: flex;
+    align-items: center;
 }
 
 .navbar {
@@ -33,7 +36,8 @@ header {
     align-items: center;
     max-width: 1400px;
     margin: 0 auto;
-    column-gap: 40px;   
+    column-gap: 40px;
+    width: 100%;
 }
 
 .logo h1 {
@@ -124,8 +128,7 @@ header {
     color: #333;
     text-decoration: none;
     font-size: 16px;
-    /*font-family: 'Amoresa', cursive;*/
-    font-family: 'Arial', sans- ;
+    font-family: 'Arial', sans-serif;
     font-weight: normal;
 }
 
@@ -178,10 +181,14 @@ header {
 }
 
 /* ========== SECTION PRODUCTOS ========== */
+body {
+    padding-top: 100px;
+}
+
 section {
     text-align: center;
-    padding: 100px;
-    margin-bottom: 500px;
+    padding: 60px 40px 60px;
+    margin-bottom: 120px; /* espacio para footer fijo */
 }
 
 section h2 {
@@ -216,7 +223,7 @@ section h2 {
     object-fit: contain;
     max-width: 100%;
     max-height: 100%;
-}   
+}
 
 .product-card {
     background: white;
@@ -238,29 +245,29 @@ section h2 {
 
 /* === COLORES / VARIANTES === */
 .color-dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin: 8px 0 4px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 8px 0 4px;
 }
 
 .color-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: #ccc; /* color neutro */
-  cursor: pointer;
-  border: 1px solid #999;
-  transition: transform 0.2s, box-shadow 0.2s;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ccc;
+    cursor: pointer;
+    border: 1px solid #999;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .color-dot:hover {
-  transform: scale(1.2);
+    transform: scale(1.2);
 }
 
 .color-dot.active {
-  box-shadow: 0 0 0 2px #836b9d; /* color marca */
-  background-color: #836b9d;
+    box-shadow: 0 0 0 2px #836b9d;
+    background-color: #836b9d;
 }
 
 .btn-buy {
@@ -315,128 +322,215 @@ footer {
     color: #00d9ff;
 }
 
-/* ===== FIX HEADER ===== */
-header {
-    height: 100px;
-    display: flex;
-    align-items: center;
-    padding: 20px 40px;
-}
-
-body {
-    padding-top: 100px;
-}
-/* Tablets */
+/* ========== TABLETS (max 768px) ========== */
 @media (max-width: 768px) {
 
-    .navbar {
-        flex-direction: column;
-        gap: 15px;
+    header {
+        height: auto;
         padding: 15px 20px;
     }
 
+    .navbar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Logo a la izquierda, admin + búsqueda a la derecha */
+    .logo {
+        flex: 0 0 auto;
+    }
+
     .nav-links {
-        position: static;
-        transform: none;
+        order: 3;
+        width: 100%;
+        justify-content: center;
         gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .admin-access {
+        order: 2;
+        margin-right: 0;
+    }
+
+    .search-box {
+        order: 2;
+        margin-right: 0;
+        flex: 0 0 auto;
+    }
+
+    .search-box input {
+        width: 130px;
     }
 
     section {
-        padding: 60px 20px;
-        margin-bottom: 300px;
+        padding: 40px 20px 40px;
+        margin-bottom: 140px;
     }
 
     #productosGrid {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 20px;
-    }
-
-    .product-card {
-        width: 100%;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 16px;
     }
 }
 
-/* Móviles */
+/* ========== MÓVILES (max 480px) ========== */
 @media (max-width: 480px) {
 
-    /* HEADER */
+    /* HEADER compacto de una línea */
     header {
-        position: static; /* 🔑 deja de ser fijo en móvil */
-        padding: 15px;
+        position: sticky;
+        top: 0;
+        padding: 12px 16px;
+        height: auto;
+    }
+
+    body {
+        padding-top: 0;
     }
 
     .navbar {
-        flex-direction: column;
-        gap: 15px;
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        grid-template-rows: auto auto;
         align-items: center;
+        gap: 8px 12px;
+    }
+
+    /* Fila 1: logo | admin | búsqueda */
+    .logo {
+        grid-column: 1;
+        grid-row: 1;
     }
 
     .logo h1 {
-        font-size: 24px;
+        font-size: 26px;
     }
 
-    /* NAV LINKS */
+    .admin-access {
+        grid-column: 2;
+        grid-row: 1;
+        margin-right: 0;
+    }
+
+    .search-box {
+        grid-column: 3;
+        grid-row: 1;
+        margin-right: 0;
+    }
+
+    /* Ocultar input de búsqueda — solo ícono en móvil */
+    .search-box input {
+        display: none;
+    }
+
+    .search-box button {
+        font-size: 22px;
+        padding: 4px;
+    }
+
+    /* Fila 2: nav-links centrados */
     .nav-links {
-        position: static;
-        transform: none;
-        flex-direction: column;
-        gap: 12px;
-        width: 100%;
-        text-align: center;
+        grid-column: 1 / -1;
+        grid-row: 2;
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        flex-wrap: wrap;
+        padding: 4px 0 0;
     }
 
     .nav-links a {
         font-size: 20px;
     }
 
-    /* SEARCH */
-    .search-box {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .search-box input {
-        width: 100%;
-        max-width: 260px;
-    }
-
     /* SECTION */
     section {
-        padding: 40px 15px;
-        margin-bottom: 250px;
+        padding: 24px 16px 24px;
+        margin-bottom: 0;
+        text-align: center;
+    }
+
+    /* Eliminar padding-top del body ya que el header es sticky */
+    body {
+        padding-top: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    section {
+        flex: 1;
     }
 
     section h2 {
-        font-size: 28px;
-        margin-bottom: 25px;
+        font-size: 26px;
+        margin-bottom: 20px;
     }
 
-    /* GRID */
+    /* GRID: 2 columnas en móvil */
     #productosGrid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
     }
 
-    /* CARD */
+    /* CARD más compacta */
     .product-card {
+        padding: 12px;
         width: 100%;
-        max-width: 320px;
+        max-width: 100%;
     }
 
-    /* BOTÓN */
+    .product-image {
+        height: 120px;
+    }
+
+    .product-image img {
+        width: 90px;
+        height: 90px;
+    }
+
+    .product-card h3 {
+        font-size: 14px;
+        margin: 6px 0 2px;
+    }
+
+    .product-category {
+        font-size: 12px;
+    }
+
+    .product-price {
+        font-size: 14px;
+    }
+
     .btn-buy {
+        font-size: 13px;
+        padding: 7px 12px;
         width: 100%;
-        justify-content: center;
-        padding: 12px 0;
+        text-align: center;
+        display: block;
     }
 
-    /* FOOTER */
+    /* FOOTER al fondo en móvil */
     footer {
-        position: static; /* 🔑 igual que el header */
-        padding: 20px;
+        position: static;
+        padding: 20px 16px;
+        margin-top: auto;
     }
 
     .social-media {
-        flex-direction: column;
-        gap: 15px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 16px;
+        justify-content: center;
+    }
+
+    footer p {
+        font-size: 12px;
+        color: rgba(255,255,255,0.8);
+        margin: 10px 0 0;
     }
 }
