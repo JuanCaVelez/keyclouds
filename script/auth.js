@@ -33,7 +33,7 @@ function login(username, password) {
 //Cierre sesion actual
 function logout() {
     localStorage.removeItem(SESSION_KEY);
-    window.location.href = '/login.html';
+    window.location.href = 'login.html';
 }
 
 //verifica si el usuario esta autentificado
@@ -105,7 +105,7 @@ function renewSession(){
 function requireAuth() {
     if(!isAuthenticated()) {
         sessionStorage.setItem('redirect_after_login', window.location.pathname);
-        window.location.href = '/login.html';
+        window.location.href = 'login.html';
         return false;
     }
     renewSession();
