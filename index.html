@@ -38,6 +38,13 @@
                 <i class="fa-solid fa-magnifying-glass"></i>
             </button>
         </div>
+        <!-- Barra de búsqueda completa solo visible en móvil (fila 3 del grid) -->
+        <div class="search-full">
+            <input type="text" id="searchInputMobile" placeholder="Buscar productos..." aria-label="Buscar productos">
+            <button type="button" onclick="searchProductsMobile()" aria-label="Buscar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </div>
     </nav>
     </header>
 
@@ -76,17 +83,14 @@
             buyProduct
         } from "./script/products.js";
 
-        // Exponer funciones al HTML (necesario para onclick en templates)
         window.changeProductImage = changeProductImage;
         window.buyProduct = buyProduct;
 
-        // Inicializar página
         window.onload = async function() {
             await displayProducts();
             loadNavbarCategoryMenu();
         };
 
-        // Cargar categorías en el menú del navbar
         function loadNavbarCategoryMenu() {
             const menu = document.getElementById('navbarCategoryMenu');
             if (!menu) return;
@@ -113,7 +117,6 @@
             menu.innerHTML = html;
         }
 
-        // Seleccionar categoría
         window.selectCategory = async function(category, displayName) {
             const title = document.getElementById('productosTitle');
             if (title) {
@@ -127,7 +130,6 @@
             document.getElementById("productos").scrollIntoView({ behavior: 'smooth' });
         };
 
-        // Búsqueda de productos
         window.searchProducts = async function() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
             const products = await getProducts();
@@ -145,11 +147,30 @@
             displayProducts(filtered);
         };
 
-        // Buscar al presionar Enter
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                window.searchProducts();
+        // Búsqueda desde la barra móvil
+        window.searchProductsMobile = async function() {
+            const searchTerm = document.getElementById('searchInputMobile').value.toLowerCase().trim();
+            const products = await getProducts();
+
+            if (!searchTerm) {
+                displayProducts(products);
+                return;
             }
+
+            const filtered = products.filter(product =>
+                product.name.toLowerCase().includes(searchTerm) ||
+                (product.category && product.category.toLowerCase().includes(searchTerm))
+            );
+
+            displayProducts(filtered);
+        };
+
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') window.searchProducts();
+        });
+
+        document.getElementById('searchInputMobile').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') window.searchProductsMobile();
         });
     </script>
 </body>

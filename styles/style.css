@@ -161,6 +161,11 @@ header {
     cursor: pointer;
 }
 
+/* Barra búsqueda móvil — oculta en desktop */
+.search-full {
+    display: none;
+}
+
 /* ADMIN ICON */
 .admin-access {
     display: flex;
@@ -188,7 +193,7 @@ body {
 section {
     text-align: center;
     padding: 60px 40px 60px;
-    margin-bottom: 120px;
+    margin-bottom: 120px; /* espacio para footer fijo */
 }
 
 section h2 {
@@ -330,39 +335,38 @@ footer {
         padding: 15px 20px;
     }
 
+    /* Fila 1: logo (izq) | lupa | admin (der) | Fila 2: nav-links */
     .navbar {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        grid-template-rows: auto auto;
         align-items: center;
-        gap: 10px;
+        gap: 8px 12px;
     }
 
     .logo {
-        flex: 0 0 auto;
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .search-box {
+        display: none;
+    }
+
+    .admin-access {
+        grid-column: 2;
+        grid-row: 1;
+        margin-right: 0;
+        display: flex;
     }
 
     .nav-links {
-        order: 3;
+        grid-column: 1 / -1;
+        grid-row: 2;
         width: 100%;
         justify-content: center;
         gap: 20px;
         flex-wrap: wrap;
-    }
-
-    .admin-access {
-        order: 2;
-        margin-right: 0;
-    }
-
-    .search-box {
-        order: 2;
-        margin-right: 0;
-        flex: 0 0 auto;
-    }
-
-    .search-box input {
-        width: 130px;
     }
 
     section {
@@ -379,7 +383,7 @@ footer {
 /* ========== MÓVILES (max 480px) ========== */
 @media (max-width: 480px) {
 
-    /* HEADER compacto */
+    /* HEADER compacto de una línea */
     header {
         position: sticky;
         top: 0;
@@ -391,72 +395,97 @@ footer {
         padding-top: 0;
     }
 
+    /* Grid: 3 filas
+       Fila 1: logo | admin | lupa-icon
+       Fila 2: nav-links
+       Fila 3: barra de búsqueda completa */
     .navbar {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-    }
-
-    /* Fila 1: logo | admin | búsqueda en una línea */
-    .navbar-top-row {
-        display: flex;
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        grid-template-rows: auto auto auto;
         align-items: center;
-        justify-content: space-between;
-        width: 100%;
+        gap: 8px 12px;
     }
 
-    /* Logo */
+    /* Fila 1: logo */
     .logo {
-        order: 1;
-        flex: 1;
+        grid-column: 1;
+        grid-row: 1;
     }
 
     .logo h1 {
         font-size: 26px;
     }
 
-    /* Admin icon */
-    .admin-access {
-        order: 2;
-        margin-right: 0;
-        flex: 0 0 auto;
+    /* Fila 1: admin (extremo derecho), lupa oculta */
+    .search-box {
+        display: none;
     }
 
-    /* Barra de búsqueda completa en móvil — visible y centrada */
-    .search-box {
-        order: 3;
-        width: 100%;
+    .admin-access {
+        grid-column: 2;
+        grid-row: 1;
         margin-right: 0;
-        justify-content: center;
+        display: flex;
     }
 
     .search-box input {
-        display: block; /* VISIBLE en móvil */
-        width: 100%;
-        max-width: 300px;
-        font-size: 14px;
-        padding: 8px 14px;
+        display: none;
     }
 
     .search-box button {
-        font-size: 18px;
-        flex-shrink: 0;
+        font-size: 22px;
+        padding: 4px;
     }
 
-    /* Nav links centrados */
+    /* Fila 2: nav-links centrados */
     .nav-links {
-        order: 4;
+        grid-column: 1 / -1;
+        grid-row: 2;
         display: flex;
         justify-content: center;
         gap: 24px;
         flex-wrap: wrap;
-        padding: 4px 0 0;
+        padding: 0;
         width: 100%;
     }
 
     .nav-links a {
         font-size: 20px;
+    }
+
+    /* Fila 3: barra de búsqueda ancho completo */
+    .search-full {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 20px;
+        padding: 6px 14px;
+    }
+
+    .search-full input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        color: white;
+        font-size: 15px;
+        outline: none;
+    }
+
+    .search-full input::placeholder {
+        color: rgba(255,255,255,0.75);
+    }
+
+    .search-full button {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 0;
     }
 
     /* SECTION */
@@ -466,6 +495,7 @@ footer {
         text-align: center;
     }
 
+    /* Eliminar padding-top del body ya que el header es sticky */
     body {
         padding-top: 0;
         min-height: 100vh;
@@ -488,60 +518,33 @@ footer {
         gap: 12px;
     }
 
-    /* CARD centrada */
+    /* CARD más compacta */
     .product-card {
         padding: 12px;
         width: 100%;
         max-width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
     }
 
     .product-image {
         height: 120px;
-        width: 100%;
-        justify-content: center;
     }
 
     .product-image img {
         width: 90px;
         height: 90px;
-        display: block;
-        margin: 0 auto;
     }
 
     .product-card h3 {
         font-size: 14px;
         margin: 6px 0 2px;
-        text-align: center;
-        width: 100%;
     }
 
     .product-category {
         font-size: 12px;
-        text-align: center;
-        width: 100%;
     }
 
     .product-price {
         font-size: 14px;
-        text-align: center;
-        width: 100%;
-    }
-
-    .color-dots {
-        justify-content: center;
-        width: 100%;
-    }
-
-    .product-info {
-        width: 100%;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
     }
 
     .btn-buy {
