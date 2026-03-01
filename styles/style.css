@@ -193,7 +193,7 @@ body {
 section {
     text-align: center;
     padding: 60px 40px 60px;
-    margin-bottom: 120px; /* espacio para footer fijo */
+    margin-bottom: 120px;
 }
 
 section h2 {
@@ -278,7 +278,6 @@ section h2 {
 .btn-buy {
     text-decoration: none;
     display: inline-block;
-    align-items: center;
     gap: 6px;
     padding: 8px 18px;
     border-radius: 999px;
@@ -335,10 +334,11 @@ footer {
         padding: 15px 20px;
     }
 
-    /* Fila 1: logo (izq) | lupa | admin (der) | Fila 2: nav-links */
+    /* Fila 1: logo (izq) | admin (der)
+       Fila 2: nav-links */
     .navbar {
         display: grid;
-        grid-template-columns: 1fr auto auto;
+        grid-template-columns: 1fr auto;
         grid-template-rows: auto auto;
         align-items: center;
         gap: 8px 12px;
@@ -349,15 +349,15 @@ footer {
         grid-row: 1;
     }
 
-    .search-box {
-        display: none;
-    }
-
     .admin-access {
         grid-column: 2;
         grid-row: 1;
         margin-right: 0;
         display: flex;
+    }
+
+    .search-box {
+        display: none;
     }
 
     .nav-links {
@@ -383,7 +383,6 @@ footer {
 /* ========== MÓVILES (max 480px) ========== */
 @media (max-width: 480px) {
 
-    /* HEADER compacto de una línea */
     header {
         position: sticky;
         top: 0;
@@ -393,21 +392,22 @@ footer {
 
     body {
         padding-top: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
     }
 
-    /* Grid: 3 filas
-       Fila 1: logo | admin | lupa-icon
+    /* Fila 1: logo (izq) | admin (der)
        Fila 2: nav-links
-       Fila 3: barra de búsqueda completa */
+       Fila 3: barra búsqueda completa */
     .navbar {
         display: grid;
-        grid-template-columns: 1fr auto auto;
+        grid-template-columns: 1fr auto;
         grid-template-rows: auto auto auto;
         align-items: center;
         gap: 8px 12px;
     }
 
-    /* Fila 1: logo */
     .logo {
         grid-column: 1;
         grid-row: 1;
@@ -417,11 +417,6 @@ footer {
         font-size: 26px;
     }
 
-    /* Fila 1: admin (extremo derecho), lupa oculta */
-    .search-box {
-        display: none;
-    }
-
     .admin-access {
         grid-column: 2;
         grid-row: 1;
@@ -429,16 +424,11 @@ footer {
         display: flex;
     }
 
-    .search-box input {
+    .search-box {
         display: none;
     }
 
-    .search-box button {
-        font-size: 22px;
-        padding: 4px;
-    }
-
-    /* Fila 2: nav-links centrados */
+    /* Fila 2: nav-links */
     .nav-links {
         grid-column: 1 / -1;
         grid-row: 2;
@@ -454,7 +444,7 @@ footer {
         font-size: 20px;
     }
 
-    /* Fila 3: barra de búsqueda ancho completo */
+    /* Fila 3: barra búsqueda ancho completo */
     .search-full {
         grid-column: 1 / -1;
         grid-row: 3;
@@ -490,21 +480,10 @@ footer {
 
     /* SECTION */
     section {
-        padding: 24px 16px 24px;
+        flex: 1;
+        padding: 24px 16px;
         margin-bottom: 0;
         text-align: center;
-    }
-
-    /* Eliminar padding-top del body ya que el header es sticky */
-    body {
-        padding-top: 0;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-    }
-
-    section {
-        flex: 1;
     }
 
     section h2 {
@@ -512,13 +491,12 @@ footer {
         margin-bottom: 20px;
     }
 
-    /* GRID: 2 columnas en móvil */
+    /* GRID: 2 columnas */
     #productosGrid {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
 
-    /* CARD más compacta */
     .product-card {
         padding: 12px;
         width: 100%;
@@ -555,7 +533,7 @@ footer {
         display: block;
     }
 
-    /* FOOTER al fondo en móvil */
+    /* FOOTER estático en móvil */
     footer {
         position: static;
         padding: 20px 16px;
