@@ -113,6 +113,67 @@
             color: #666;
             margin-top: 4px;
         }
+
+        /* ==========================
+           GESTIÓN DE CATEGORÍAS
+           ========================== */
+        .category-form {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .category-form .form-group {
+            flex: 1;
+            min-width: 200px;
+            margin: 0;
+        }
+
+        .category-form-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .admin-categories-list {
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .admin-category-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            background-color: #f9f7fb;
+            border-radius: 10px;
+            border: 1px solid #eee;
+        }
+
+        .admin-category-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .admin-category-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .admin-category-actions .btn-edit,
+        .admin-category-actions .btn-delete {
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .category-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
     </style>
 </head>
 
@@ -143,6 +204,25 @@
     <section class="admin-section">
         <h2>Panel de Administración</h2>
 
+        <!-- GESTIÓN DE CATEGORÍAS -->
+        <div class="admin-form-container">
+            <h3 id="categoryFormTitle">Agregar Categoría</h3>
+
+            <form id="categoryForm" class="category-form">
+                <div class="form-group">
+                    <label for="categoryName">Nombre de la categoría *</label>
+                    <input type="text" id="categoryName" required placeholder="Ej: Navidad">
+                </div>
+                <div class="category-form-buttons">
+                    <button type="submit" id="categorySubmitBtn" class="btn-primary">Agregar</button>
+                    <button type="button" id="categoryCancelBtn" class="btn-secondary" style="display:none" onclick="cancelEditCategory()">Cancelar</button>
+                </div>
+            </form>
+
+            <div id="adminCategoriesList" class="admin-categories-list"></div>
+        </div>
+
+        <!-- FORMULARIO DE PRODUCTO -->
         <div class="admin-form-container">
             <h3 id="formTitle">Agregar Nuevo Producto</h3>
 

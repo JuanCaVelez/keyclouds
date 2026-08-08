@@ -79,7 +79,6 @@
 
     <script type="module">
         import {
-            getCategories,
             getProducts,
             filterByCategory,
             displayProducts,
@@ -87,18 +86,20 @@
             buyProduct
         } from "./script/products.js";
 
+        import categoryService from "./script/categories.js";
+
         window.changeProductImage = changeProductImage;
         window.buyProduct = buyProduct;
 
         window.onload = async function() {
             await displayProducts();
-            loadNavbarCategoryMenu();
+            await loadNavbarCategoryMenu();
         };
 
-        function loadNavbarCategoryMenu() {
+        async function loadNavbarCategoryMenu() {
             const menu = document.getElementById('navbarCategoryMenu');
             if (!menu) return;
-            const categories = getCategories();
+            const categories = await categoryService.getAll();
 
             let html = `
                 <li>
@@ -111,8 +112,8 @@
             categories.forEach(category => {
                 html += `
                     <li>
-                        <a href="#productos" onclick="selectCategory('${category}', '${category}'); return false;">
-                            ${category}
+                        <a href="#productos" onclick="selectCategory('${category.name}', '${category.name}'); return false;">
+                            ${category.name}
                         </a>
                     </li>
                 `;

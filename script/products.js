@@ -11,22 +11,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 /* ==========================
-   CATEGORÍAS
-   ========================== */
-const CATEGORIES = [
-  "Navidad",
-  "Halloween",
-  "Decorativa",
-  "Postres",
-  "Recuerdos",
-  "Kit de regalo"
-];
-
-function getCategories() {
-  return CATEGORIES;
-}
-
-/* ==========================
    PRODUCTOS / FIRESTORE
    ========================== */
 async function getProducts() {
@@ -237,7 +221,6 @@ async function displayAdminProducts() {
 }
 
 export {
-  getCategories,
   getProducts,
   addProduct,
   updateProduct,
