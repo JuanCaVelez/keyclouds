@@ -17,6 +17,7 @@ const CATEGORIES = [
   "Navidad",
   "Halloween",
   "San Valentín",
+  "Postres"
 ];
 
 function getCategories() {
