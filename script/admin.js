@@ -1,233 +1,252 @@
-import { db } from "./firebase.js";
 import {
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-  query,
-  orderBy
-} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+  getProducts,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+  displayAdminProducts
+} from "./products.js";
+
+import categoryService from "./categories.js";
+
+let editingProductId = null;
+let editingCategoryId = null;
 
 /* ==========================
-   PRODUCTOS / FIRESTORE
+   INICIALIZACIÓN
    ========================== */
-async function getProducts() {
-  try {
-    const q = query(collection(db, "products"), orderBy("name"));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch (e) {
-    console.error("Error leyendo productos:", e);
-    return [];
-  }
-}
-
-async function addProduct(product) {
-  try {
-    const docRef = await addDoc(collection(db, "products"), product);
-    return docRef.id;
-  } catch (e) {
-    console.error("Error agregando producto:", e);
-    return null;
-  }
-}
-
-async function updateProduct(id, updatedProduct) {
-  try {
-    const ref = doc(db, "products", id);
-    await updateDoc(ref, updatedProduct);
-  } catch (e) {
-    console.error("Error actualizando producto:", e);
-  }
-}
-
-async function deleteProduct(id) {
-  try {
-    await deleteDoc(doc(db, "products", id));
-  } catch (e) {
-    console.error("Error eliminando producto:", e);
-  }
-}
+document.addEventListener("DOMContentLoaded", () => {
+  displayAdminProducts();
+  loadCategorySelect();
+  displayAdminCategories();
+});
 
 /* ==========================
-   FILTRO POR CATEGORÍA
+   ENVÍO DEL FORMULARIO DE PRODUCTO
    ========================== */
-let currentSelectedCategory = "all";
-
-async function filterByCategory(category) {
-  currentSelectedCategory = category;
-  const products = await getProducts();
-
-  if (category === "all") {
-    displayProducts(products);
-  } else {
-    const filtered = products.filter(p => p.category === category);
-    displayProducts(filtered);
-  }
-}
+document.getElementById("productForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  saveProduct();
+});
 
 /* ==========================
-   MOSTRAR PRODUCTOS (INDEX)
+   GUARDAR / EDITAR PRODUCTO
    ========================== */
-async function displayProducts(productsToDisplay = null) {
-  const products = productsToDisplay || await getProducts();
-  const grid = document.getElementById("productosGrid");
-  const noProducts = document.getElementById("noProducts");
+async function saveProduct() {
+  const id = document.getElementById("productId").value;
+  const name = document.getElementById("productName").value.trim();
+  const category = document.getElementById("productCategory").value;
+  const price = document.getElementById("productPrice").value.trim();
+  const link = document.getElementById("productLink").value.trim();
 
-  if (!grid) return;
+  // Obtener imágenes desde window.productImages
+  const images = (window.productImages || []).filter(url => url !== "");
 
-  if (products.length === 0) {
-    grid.style.display = "none";
-    noProducts.style.display = "block";
-
-    const text = document.getElementById("noProductsText");
-    if (text) {
-      text.textContent =
-        currentSelectedCategory === "all"
-          ? "No hay productos disponibles."
-          : `No hay productos disponibles en la categoría "${currentSelectedCategory}".`;
-    }
+  if (!name || !category || !price || !link) {
+    alert("Completa todos los campos obligatorios");
     return;
   }
 
-  grid.style.display = "grid";
-  noProducts.style.display = "none";
+  if (images.length === 0) {
+    alert("Debes subir al menos una imagen del producto");
+    return;
+  }
 
-  grid.innerHTML = products.map(product => `
-    <div class="product-card">
-      <div class="product-image">
-        <img 
-          src="${product.images[0]}" 
-          alt="${product.name}"
-          id="product-img-p${product.id}"
-          data-selected-color="0">
-      </div>
+  const product = { name, category, price, images, link };
 
-      <div class="color-dots">
-        ${product.images.map((_, index) => `
-          <span 
-            class="color-dot ${index === 0 ? "active" : ""}"
-            onclick="changeProductImage('${product.id}', ${index}, this)">
-          </span>
-        `).join("")}
-      </div>
+  if (id) {
+    await updateProduct(id, product);
+  } else {
+    await addProduct(product);
+  }
 
-      <div class="product-info">
-        <h3>${product.name}</h3>
-        ${product.category ? `<p class="product-category">${product.category}</p>` : ""}
-        <p class="product-price">$${product.price}</p>
-        <a href="#" onclick="buyProduct('${product.id}')" class="btn-buy">
-          <i class="fa-solid fa-cart-shopping"></i> Comprar
-        </a>
-      </div>
-    </div>
-  `).join("");
-
-  // Guardar productos en memoria para acceso rápido
-  window._cachedProducts = products;
+  resetForm();
+  await displayAdminProducts();
+  alert("Producto guardado correctamente ✅");
 }
 
 /* ==========================
-   CAMBIAR IMAGEN / COLOR
+   EDITAR PRODUCTO
    ========================== */
-function changeProductImage(productId, imageIndex, dotElement) {
-  const products = window._cachedProducts || [];
-  const product = products.find(p => String(p.id) === String(productId));
-  if (!product || !product.images[imageIndex]) return;
-
-  const img = document.getElementById(`product-img-p${productId}`);
-  if (!img) return;
-
-  img.src = product.images[imageIndex];
-  img.dataset.selectedColor = imageIndex;
-
-  dotElement.parentElement
-    .querySelectorAll(".color-dot")
-    .forEach(dot => dot.classList.remove("active"));
-
-  dotElement.classList.add("active");
-}
-
-/* ==========================
-   COMPRAR POR WHATSAPP
-   ========================== */
-function buyProduct(productId) {
-  const products = window._cachedProducts || [];
-  const product = products.find(p => String(p.id) === String(productId));
+async function editProduct(id) {
+  const products = await getProducts();
+  const product = products.find(p => p.id === id);
   if (!product) return;
 
-  const img = document.getElementById(`product-img-p${productId}`);
-  const selectedIndex = img?.dataset?.selectedColor ?? 0;
+  editingProductId = id;
 
-  const message = `
-Hola 👋
-Quiero comprar una vela:
+  document.getElementById("productId").value = product.id;
+  document.getElementById("productName").value = product.name;
+  document.getElementById("productCategory").value = product.category;
+  document.getElementById("productPrice").value = product.price;
+  document.getElementById("productLink").value = product.link;
 
-🕯️ Producto: ${product.name}
-🎨 Color: ${parseInt(selectedIndex) + 1}
-💰 Precio: $${product.price}
-📂 Categoría: ${product.category}
-  `.trim();
+  // Cargar imágenes existentes en los slots
+  window.productImages = ['', '', ''];
+  product.images.forEach((url, index) => {
+    if (index < 3) {
+      window.setImageSlot(index, url);
+    }
+  });
 
-  const url = `${product.link}?text=${encodeURIComponent(message)}`;
-  window.open(url, "_blank");
+  document.getElementById("formTitle").textContent = "Editar Producto";
+  document.querySelector(".admin-form-container").scrollIntoView({ behavior: "smooth" });
 }
 
 /* ==========================
-   MOSTRAR PRODUCTOS (ADMIN)
+   ELIMINAR PRODUCTO
    ========================== */
-async function displayAdminProducts() {
-  const products = await getProducts();
-  const container = document.getElementById("adminProductsList");
+async function confirmDelete(id) {
+  if (!confirm("¿Estás seguro de que deseas eliminar este producto?")) return;
+  await deleteProduct(id);
+  await displayAdminProducts();
+  alert("Producto eliminado exitosamente");
+}
 
-  if (!container) return;
+/* ==========================
+   CANCELAR / RESET
+   ========================== */
+function cancelEdit() {
+  resetForm();
+}
 
-  if (products.length === 0) {
-    container.innerHTML =
-      '<p class="no-products-admin">No hay productos registrados aún.</p>';
+function resetForm() {
+  editingProductId = null;
+  document.getElementById("productForm").reset();
+  document.getElementById("productId").value = "";
+  document.getElementById("formTitle").textContent = "Agregar Nuevo Producto";
+
+  // Limpiar slots de imágenes
+  window.productImages = ['', '', ''];
+  [0, 1, 2].forEach(i => {
+    if (window.removeImage) window.removeImage(i);
+  });
+}
+
+/* ==========================
+   CARGAR CATEGORÍAS EN EL SELECT DEL FORMULARIO
+   ========================== */
+async function loadCategorySelect() {
+  const select = document.getElementById("productCategory");
+  if (!select) return;
+
+  const previousValue = select.value;
+
+  select.innerHTML = `<option value="">Selecciona una categoría</option>`;
+
+  const categories = await categoryService.getAll();
+  categories.forEach(category => {
+    const option = document.createElement("option");
+    option.value = category.name;
+    option.textContent = category.name;
+    select.appendChild(option);
+  });
+
+  // Mantener la selección previa si sigue existiendo
+  if (previousValue) select.value = previousValue;
+}
+
+/* ==========================
+   CRUD DE CATEGORÍAS
+   ========================== */
+
+// Envío del formulario de categoría
+document.getElementById("categoryForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  saveCategory();
+});
+
+async function saveCategory() {
+  const input = document.getElementById("categoryName");
+  const name = input.value.trim();
+
+  if (!name) {
+    alert("Escribe un nombre de categoría");
     return;
   }
 
-  container.innerHTML = products.map(product => `
-    <div class="admin-product-item">
-      <img 
-        src="${product.images[0]}" 
-        alt="${product.name}" 
-        class="admin-product-thumb">
+  const duplicate = await categoryService.isDuplicate(name, editingCategoryId);
+  if (duplicate) {
+    alert("Ya existe una categoría con ese nombre");
+    return;
+  }
 
-      <div class="admin-product-details">
-        <h4>${product.name}</h4>
-        ${product.category ? `<p class="admin-product-category">${product.category}</p>` : ""}
-        <p class="admin-product-price">${product.price} $</p>
-        <a href="${product.link}" target="_blank" class="admin-product-link">
-          <i class="fa-solid fa-link"></i> Ver enlace
-        </a>
-      </div>
+  if (editingCategoryId) {
+    const ok = await categoryService.update(editingCategoryId, name);
+    if (!ok) {
+      alert("No se pudo actualizar la categoría. Revisa la consola (F12) para más detalles.");
+      return;
+    }
+    editingCategoryId = null;
+    document.getElementById("categoryFormTitle").textContent = "Agregar Categoría";
+    document.getElementById("categorySubmitBtn").textContent = "Agregar";
+    document.getElementById("categoryCancelBtn").style.display = "none";
+  } else {
+    const newId = await categoryService.add(name);
+    if (!newId) {
+      alert("No se pudo guardar la categoría. Revisa la consola (F12) para más detalles.");
+      return;
+    }
+  }
 
-      <div class="admin-product-actions">
-        <button onclick="editProduct('${product.id}')" class="btn-edit">
+  input.value = "";
+  await displayAdminCategories();
+  await loadCategorySelect();
+}
+
+async function displayAdminCategories() {
+  const container = document.getElementById("adminCategoriesList");
+  if (!container) return;
+
+  const categories = await categoryService.getAll();
+
+  if (categories.length === 0) {
+    container.innerHTML = '<p class="no-products-admin">No hay categorías registradas aún.</p>';
+    return;
+  }
+
+  container.innerHTML = categories.map(category => `
+    <div class="admin-category-item">
+      <span class="admin-category-name">${category.name}</span>
+      <div class="admin-category-actions">
+        <button onclick="editCategory('${category.id}', '${category.name.replace(/'/g, "\\'")}')" class="btn-edit">
           <i class="fa-solid fa-edit"></i>
         </button>
-        <button onclick="confirmDelete('${product.id}')" class="btn-delete">
+        <button onclick="confirmDeleteCategory('${category.id}')" class="btn-delete">
           <i class="fa-solid fa-trash"></i>
         </button>
       </div>
     </div>
   `).join("");
-
-  window._cachedProducts = products;
 }
 
-export {
-  getProducts,
-  addProduct,
-  updateProduct,
-  deleteProduct,
-  filterByCategory,
-  displayProducts,
-  displayAdminProducts,
-  changeProductImage,
-  buyProduct
-};
+function editCategory(id, name) {
+  editingCategoryId = id;
+  document.getElementById("categoryName").value = name;
+  document.getElementById("categoryFormTitle").textContent = "Editar Categoría";
+  document.getElementById("categorySubmitBtn").textContent = "Guardar";
+  document.getElementById("categoryCancelBtn").style.display = "inline-block";
+  document.getElementById("categoryName").focus();
+}
+
+function cancelEditCategory() {
+  editingCategoryId = null;
+  document.getElementById("categoryName").value = "";
+  document.getElementById("categoryFormTitle").textContent = "Agregar Categoría";
+  document.getElementById("categorySubmitBtn").textContent = "Agregar";
+  document.getElementById("categoryCancelBtn").style.display = "none";
+}
+
+async function confirmDeleteCategory(id) {
+  if (!confirm("¿Estás seguro de que deseas eliminar esta categoría? Los productos que ya la usan conservarán el nombre, pero dejará de aparecer en el menú.")) return;
+  await categoryService.remove(id);
+  await displayAdminCategories();
+  await loadCategorySelect();
+}
+
+// Exponer funciones al HTML
+window.editProduct = editProduct;
+window.confirmDelete = confirmDelete;
+window.cancelEdit = cancelEdit;
+window.editCategory = editCategory;
+window.cancelEditCategory = cancelEditCategory;
+window.confirmDeleteCategory = confirmDeleteCategory;
