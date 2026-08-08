@@ -19,7 +19,7 @@ const CATEGORIES = [
   "Decorativa",
   "Postres",
   "Recuerdos",
-  "Kit deregalo"
+  "Kit de regalo"
 ];
 
 function getCategories() {
