@@ -16,8 +16,10 @@ import {
 const CATEGORIES = [
   "Navidad",
   "Halloween",
-  "San Valentín",
-  "Postres"
+  "Decorativa",
+  "Postres",
+  "Recuerdos",
+  "Kit deregalo"
 ];
 
 function getCategories() {
