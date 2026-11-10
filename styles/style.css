@@ -210,6 +210,21 @@ section h2 {
     margin: 0 auto;
 }
 
+.product-card {
+    background: white;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+}
+
 .product-image {
     width: 100%;
     height: 160px;
@@ -230,22 +245,41 @@ section h2 {
     max-height: 100%;
 }
 
-.product-card {
-    background: white;
-    border-radius: 12px;
-    padding: 18px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.product-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
-}
-
 .product-price {
     font-weight: bold;
     color: #836b9d;
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+/* === CONTENEDOR Y BADGES DE CATEGORÍA CLICABLES === */
+.product-category {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin: 8px 0;
+}
+
+/* Badge individual estilo chip */
+.category-badge-link {
+    display: inline-block;
+    background-color: #f0ebf5;
+    color: #836b9d;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.category-badge-link:hover {
+    background-color: #836b9d;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(131, 107, 157, 0.3);
 }
 
 /* === COLORES / VARIANTES === */
@@ -253,7 +287,7 @@ section h2 {
     display: flex;
     justify-content: center;
     gap: 8px;
-    margin: 8px 0 4px;
+    margin: 12px 0 6px;
 }
 
 .color-dot {
@@ -277,11 +311,17 @@ section h2 {
 
 .btn-buy {
     text-decoration: none;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     gap: 6px;
     padding: 8px 18px;
     border-radius: 999px;
+    background-color: #836b9d;
+    color: white;
+    font-weight: bold;
     transition: all 0.3s ease;
+    margin-top: auto;
 }
 
 .btn-buy:hover {
@@ -416,8 +456,6 @@ footer {
         padding: 15px 20px;
     }
 
-    /* Fila 1: logo (izq) | admin (der)
-       Fila 2: nav-links */
     .navbar {
         display: grid;
         grid-template-columns: 1fr auto;
@@ -464,7 +502,7 @@ footer {
     .footer-container {
         grid-template-columns: 1fr 1fr;
         padding: 30px 20px;
-        gap: 30px
+        gap: 30px;
     }
 }
 
@@ -485,9 +523,6 @@ footer {
         flex-direction: column;
     }
 
-    /* Fila 1: logo (izq) | admin (der)
-       Fila 2: nav-links
-       Fila 3: barra búsqueda completa */
     .navbar {
         display: grid;
         grid-template-columns: 1fr auto;
@@ -516,7 +551,6 @@ footer {
         display: none;
     }
 
-    /* Fila 2: nav-links */
     .nav-links {
         grid-column: 1 / -1;
         grid-row: 2;
@@ -532,7 +566,6 @@ footer {
         font-size: 20px;
     }
 
-    /* Fila 3: barra búsqueda ancho completo */
     .search-full {
         grid-column: 1 / -1;
         grid-row: 3;
@@ -566,7 +599,6 @@ footer {
         padding: 0;
     }
 
-    /* SECTION */
     section {
         flex: 1;
         padding: 24px 16px;
@@ -579,7 +611,6 @@ footer {
         margin-bottom: 20px;
     }
 
-    /* GRID: 2 columnas */
     #productosGrid {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
@@ -618,10 +649,9 @@ footer {
         padding: 7px 12px;
         width: 100%;
         text-align: center;
-        display: block;
+        display: flex;
     }
 
-    /* FOOTER estático en móvil */
     footer {
         position: static;
         padding: 20px 16px;
@@ -643,7 +673,7 @@ footer {
 
     .footer-container {
         grid-template-columns: 1fr;
-        padding: 24pc 16px;
-        gap: 24px 
+        padding: 24px 16px;
+        gap: 24px;
     }
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/style.css?v=2.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +17,9 @@
             <h1>KeyClouds</h1>
         </div>
         <ul class="nav-links">
-            <li><a href="#inicio">Inicio</a></li>
+            <li>
+                <a href="#inicio" onclick="selectCategory('all', 'Todas las categorías'); return false;">Inicio</a>
+            </li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" onclick="return false">
                     Productos <i class="fa-solid fa-chevron-down"></i>
@@ -144,7 +146,7 @@
             categories.forEach(category => {
                 html += `
                     <li>
-                        <a href="#productos" onclick="selectCategory('${category.name}', '${category.name}'); return false;">
+                        <a href="#productos" onclick="selectCategory('${category.name.replace(/'/g, "\\'")}', '${category.name.replace(/'/g, "\\'")}'); return false;">
                             ${category.name}
                         </a>
                     </li>
@@ -154,6 +156,7 @@
             menu.innerHTML = html;
         }
 
+        // Función expuesta globalmente para que funcionen los clics en el menú y en las tarjetas
         window.selectCategory = async function(category, displayName) {
             const title = document.getElementById('productosTitle');
             if (title) {
@@ -164,27 +167,11 @@
             }
 
             await filterByCategory(category);
-            document.getElementById("productos").scrollIntoView({ behavior: 'smooth' });
+            const section = document.getElementById("productos");
+            if (section) section.scrollIntoView({ behavior: 'smooth' });
         };
 
-        window.searchProducts = async function() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-            const products = await getProducts();
-
-            if (!searchTerm) {
-                displayProducts(products);
-                return;
-            }
-
-            const filtered = products.filter(product =>
-                product.name.toLowerCase().includes(searchTerm) ||
-                (product.category && product.category.toLowerCase().includes(searchTerm))
-            );
-
-            displayProducts(filtered);
-        };
-
-        // Búsqueda desde la barra móvil
+        // Búsqueda escritorio
         window.searchProducts = async function() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
             const products = await getProducts();
@@ -195,20 +182,40 @@
             }
 
             const filtered = products.filter(product => {
-            const nameMatches = product.name.toLowerCase().includes(searchTerm);
-            const categories = Array.isArray(product.categories) ? product.categories : (product.category ? [product.category] : []);
-            const categoryMatches = categories.some(cat => cat.toLowerCase().includes(searchTerm));
-            return nameMatches || categoryMatches;
+                const nameMatches = product.name.toLowerCase().includes(searchTerm);
+                const categories = Array.isArray(product.categories) ? product.categories : (product.category ? [product.category] : []);
+                const categoryMatches = categories.some(cat => cat.toLowerCase().includes(searchTerm));
+                return nameMatches || categoryMatches;
             });
 
             displayProducts(filtered);
         };
 
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        // Búsqueda desde la barra móvil (usando searchInputMobile)
+        window.searchProductsMobile = async function() {
+            const searchTerm = document.getElementById('searchInputMobile').value.toLowerCase().trim();
+            const products = await getProducts();
+
+            if (!searchTerm) {
+                displayProducts(products);
+                return;
+            }
+
+            const filtered = products.filter(product => {
+                const nameMatches = product.name.toLowerCase().includes(searchTerm);
+                const categories = Array.isArray(product.categories) ? product.categories : (product.category ? [product.category] : []);
+                const categoryMatches = categories.some(cat => cat.toLowerCase().includes(searchTerm));
+                return nameMatches || categoryMatches;
+            });
+
+            displayProducts(filtered);
+        };
+
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') window.searchProducts();
         });
 
-        document.getElementById('searchInputMobile').addEventListener('keypress', function(e) {
+        document.getElementById('searchInputMobile')?.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') window.searchProductsMobile();
         });
     </script>

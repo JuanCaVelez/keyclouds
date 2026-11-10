@@ -60,6 +60,8 @@ function getProductCategories(product) {
 /* ==========================
    FILTRO POR CATEGORÍA
    ========================== */
+let currentSelectedCategory = "all";
+
 async function filterByCategory(category) {
   currentSelectedCategory = category;
   const products = await getProducts();
@@ -88,6 +90,14 @@ async function displayProducts(productsToDisplay = null) {
   if (products.length === 0) {
     grid.style.display = "none";
     if (noProducts) noProducts.style.display = "block";
+
+    const text = document.getElementById("noProductsText");
+    if (text) {
+      text.textContent =
+        currentSelectedCategory === "all"
+          ? "No hay productos disponibles."
+          : `No hay productos disponibles en la categoría "${currentSelectedCategory}".`;
+    }
     return;
   }
 
@@ -96,7 +106,11 @@ async function displayProducts(productsToDisplay = null) {
 
   grid.innerHTML = products.map(product => {
     const cats = getProductCategories(product);
-    const categoryText = cats.join(", ");
+    
+    // Genera cada categoría envuelta individualmente en su propio badge
+    const categoryBadgesHtml = cats.map(cat => 
+      `<span class="category-badge-link" onclick="if(window.selectCategory) { selectCategory('${cat.replace(/'/g, "\\'")}', '${cat.replace(/'/g, "\\'")}'); }">${cat}</span>`
+    ).join(""); // <-- Sin coma intermedia, para que cada una sea un chip independiente
 
     return `
     <div class="product-card">
@@ -119,7 +133,7 @@ async function displayProducts(productsToDisplay = null) {
 
       <div class="product-info">
         <h3>${product.name}</h3>
-        ${categoryText ? `<p class="product-category">${categoryText}</p>` : ""}
+        ${categoryBadgesHtml ? `<p class="product-category">${categoryBadgesHtml}</p>` : ""}
         <p class="product-price">$${product.price}</p>
         <a href="#" onclick="buyProduct('${product.id}')" class="btn-buy">
           <i class="fa-solid fa-cart-shopping"></i> Comprar
@@ -163,6 +177,7 @@ function buyProduct(productId) {
 
   const img = document.getElementById(`product-img-p${productId}`);
   const selectedIndex = img?.dataset?.selectedColor ?? 0;
+  const cats = getProductCategories(product);
 
   const message = `
 Hola 👋
@@ -171,7 +186,7 @@ Quiero comprar una vela:
 🕯️ Producto: ${product.name}
 🎨 Color: ${parseInt(selectedIndex) + 1}
 💰 Precio: $${product.price}
-📂 Categoría: ${product.category}
+📂 Categoría(s): ${cats.join(", ")}
   `.trim();
 
   const url = `${product.link}?text=${encodeURIComponent(message)}`;
