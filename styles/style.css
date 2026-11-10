@@ -193,7 +193,7 @@ body {
 section {
     text-align: center;
     padding: 60px 40px 60px;
-    margin-bottom: 120px;
+    margin-bottom: 0;
 }
 
 section h2 {
@@ -301,29 +301,111 @@ section h2 {
 
 /* ========== FOOTER ========== */
 footer {
-    position: fixed;
-    bottom: 0;
-    background-color: #836b9d;
-    width: 100%;
-    padding: 30px;
-    text-align: center;
-    z-index: 1000;
+    background-color: #f3ecf7;
+    color: #4a3b5c;
+    text-align: left;
 }
 
-.social-media {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px;
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    gap: 40px;
 }
 
-.social-media a {
-    color: white;
+.footer-logo {
     font-family: 'Amoresa', cursive;
-    text-decoration: none;
+    font-size: 34px;
+    color: #836b9d;
+    margin: 0 0 12px;
 }
 
-.social-media a:hover {
-    color: #00d9ff;
+.footer-brand p {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 12px;
+}
+
+.footer-location i,
+.footer-contact i {
+    color: #836b9d;
+    width: 18px;
+}
+
+.footer-col h3 {
+    font-size: 17px;
+    color: #836b9d;
+    margin: 0 0 16px;
+}
+
+.footer-col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.footer-col a {
+    color: #4a3b5c;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s;
+}
+
+.footer-col a:hover {
+    color: #836b9d;
+}
+
+.footer-contact li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.footer-social {
+    display: flex;
+    gap: 12px;
+}
+
+.footer-social a {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #836b9d;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.3s;
+}
+
+.footer-social a:hover {
+    background-color: #00d9ff;
+    color: #000;
+    transform: translateY(-3px);
+}
+
+.footer-handle {
+    margin: 12px 0 0;
+    font-size: 14px;
+    color: #836b9d;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(131, 107, 157, 0.25);
+    text-align: center;
+    padding: 16px 20px;
+    font-size: 13px;
+}
+
+.footer-bottom p {
+    margin: 0;
 }
 
 /* ========== TABLETS (max 768px) ========== */
@@ -371,12 +453,18 @@ footer {
 
     section {
         padding: 40px 20px 40px;
-        margin-bottom: 140px;
+        margin-bottom: 0;
     }
 
     #productosGrid {
         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
         gap: 16px;
+    }
+
+    .footer-container {
+        grid-template-columns: 1fr 1fr;
+        padding: 30px 20px;
+        gap: 30px
     }
 }
 
@@ -551,5 +639,11 @@ footer {
         font-size: 12px;
         color: rgba(255,255,255,0.8);
         margin: 10px 0 0;
+    }
+
+    .footer-container {
+        grid-template-columns: 1fr;
+        padding: 24pc 16px;
+        gap: 24px 
     }
 }

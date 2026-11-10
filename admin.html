@@ -235,11 +235,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="productCategory">Categoría *</label>
-                    <select id="productCategory" required>
-                        <option value="">Selecciona una categoría</option>
-                    </select>
-                    <small>Selecciona la categoría del producto</small>
+                    <label>Categorías * (puedes elegir una o más)</label>
+                    <div id="productCategories" class="category-checkboxes"></div>
+                    <small>Marca todas las categorías que apliquen al producto</small>
                 </div>
 
                 <div class="form-group">
@@ -324,31 +322,40 @@
     </section>
 
     <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
-    <script src="script/auth.js"></script>
-    <script type="module">
-        import "./script/admin.js";
-    </script>
+<script src="script/auth.js"></script>
+<script type="module">
+    import "./script/admin.js";
+</script>
 
-    <script>
-        requireAuth();
+<script>
+    requireAuth();
 
-        const session = getSessionData();
-        if (session) {
-            document.getElementById('currentUser').textContent = session.username;
+    const session = getSessionData();
+    if (session) {
+        document.getElementById('currentUser').textContent = session.username;
+    }
+
+    function handleLogout() {
+        if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+            logout();
         }
+    }
 
-        function handleLogout() {
-            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-                logout();
+    // URLs de imágenes en memoria
+    window.productImages = ['', '', ''];
+
+    // Instancia única del widget de Cloudinary
+    let uploadWidget = null;
+    let currentSlot = 0;
+
+    function getUploadWidget() {
+        if (!uploadWidget) {
+            if (typeof cloudinary === 'undefined') {
+                alert("El servicio de Cloudinary aún no termina de cargar. Intenta de nuevo.");
+                return null;
             }
-        }
 
-        // URLs de imágenes en memoria
-        window.productImages = ['', '', ''];
-
-        // Abrir Cloudinary Upload Widget
-        window.openUploadWidget = function(slotIndex) {
-            const widget = cloudinary.createUploadWidget(
+            uploadWidget = cloudinary.createUploadWidget(
                 {
                     cloudName: 'images-tienda',
                     uploadPreset: 'keyclouds_preset',
@@ -357,49 +364,58 @@
                     resourceType: 'image',
                     clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
                     maxFileSize: 5000000,
-                    cropping: false,
                     sources: ['local', 'camera'],
                     language: 'es'
                 },
                 (error, result) => {
-                    if (!error && result && result.event === 'success') {
-                        const url = result.info.secure_url;
-                        setImageSlot(slotIndex, url);
-                        widget.close();
+                    if (error) {
+                        console.error("Error en Cloudinary Widget:", error);
+                        return;
+                    }
+                    if (result && result.event === 'success') {
+                        setImageSlot(currentSlot, result.info.secure_url);
+                        uploadWidget.close();
                     }
                 }
             );
+        }
+        return uploadWidget;
+    }
+
+    window.openUploadWidget = function(slotIndex) {
+        currentSlot = slotIndex;
+        const widget = getUploadWidget();
+        if (widget) {
             widget.open();
-        };
+        }
+    };
 
-        // Asignar imagen a un slot
-        window.setImageSlot = function(index, url) {
-            window.productImages[index] = url;
-            const slot = document.getElementById(`slot-${index}`);
-            const preview = document.getElementById(`preview-${index}`);
-            const urlLabel = document.getElementById(`url-label-${index}`);
-            preview.src = url;
-            urlLabel.textContent = url.split('/').pop();
-            slot.classList.add('has-image');
-        };
+    window.setImageSlot = function(index, url) {
+        window.productImages[index] = url;
+        const slot = document.getElementById(`slot-${index}`);
+        const preview = document.getElementById(`preview-${index}`);
+        const urlLabel = document.getElementById(`url-label-${index}`);
+        if (preview) preview.src = url;
+        if (urlLabel) urlLabel.textContent = url.split('/').pop();
+        if (slot) slot.classList.add('has-image');
+    };
 
-        // Quitar imagen de un slot
-        window.removeImage = function(index) {
-            window.productImages[index] = '';
-            const slot = document.getElementById(`slot-${index}`);
-            const preview = document.getElementById(`preview-${index}`);
-            const urlLabel = document.getElementById(`url-label-${index}`);
-            preview.src = '';
-            urlLabel.textContent = 'Sin imagen';
-            slot.classList.remove('has-image');
-        };
+    window.removeImage = function(index) {
+        window.productImages[index] = '';
+        const slot = document.getElementById(`slot-${index}`);
+        const preview = document.getElementById(`preview-${index}`);
+        const urlLabel = document.getElementById(`url-label-${index}`);
+        if (preview) preview.src = '';
+        if (urlLabel) urlLabel.textContent = 'Sin imagen';
+        if (slot) slot.classList.remove('has-image');
+    };
 
-        setInterval(() => {
-            const timeRemaining = getSessionTimeRemaining();
-            if (timeRemaining <= 5 && timeRemaining > 0) {
-                console.warn(`Tu sesión expirará en ${timeRemaining} minutos`);
-            }
-        }, 60000);
-    </script>
+    setInterval(() => {
+        const timeRemaining = getSessionTimeRemaining();
+        if (timeRemaining <= 5 && timeRemaining > 0) {
+            console.warn(`Tu sesión expirará en ${timeRemaining} minutos`);
+        }
+    }, 60000);
+</script>
 </body>
 </html>

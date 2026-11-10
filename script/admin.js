@@ -31,27 +31,30 @@ document.getElementById("productForm").addEventListener("submit", function (e) {
 /* ==========================
    GUARDAR / EDITAR PRODUCTO
    ========================== */
+// EN saveProduct():
 async function saveProduct() {
   const id = document.getElementById("productId").value;
   const name = document.getElementById("productName").value.trim();
-  const category = document.getElementById("productCategory").value;
+  
+  // Guardamos un array con todas las categorías marcadas
+  const categories = getSelectedCategories(); 
+  
   const price = document.getElementById("productPrice").value.trim();
   const link = document.getElementById("productLink").value.trim();
-
-  // Obtener imágenes desde window.productImages
   const images = (window.productImages || []).filter(url => url !== "");
 
-  if (!name || !category || !price || !link) {
-    alert("Completa todos los campos obligatorios");
+  if (!name || categories.length === 0 || !price || !link) {
+    alert("Completa todos los campos obligatorios y selecciona al menos una categoría.");
     return;
   }
 
   if (images.length === 0) {
-    alert("Debes subir al menos una imagen del producto");
+    alert("Debes subir al menos una imagen del producto.");
     return;
   }
 
-  const product = { name, category, price, images, link };
+  // Ahora la propiedad se llama 'categories' (Array)
+  const product = { name, categories, price, images, link };
 
   if (id) {
     await updateProduct(id, product);
@@ -63,7 +66,6 @@ async function saveProduct() {
   await displayAdminProducts();
   alert("Producto guardado correctamente ✅");
 }
-
 /* ==========================
    EDITAR PRODUCTO
    ========================== */
@@ -76,13 +78,17 @@ async function editProduct(id) {
 
   document.getElementById("productId").value = product.id;
   document.getElementById("productName").value = product.name;
-  document.getElementById("productCategory").value = product.category;
+  
+  // Soporta tanto el formato nuevo (array) como los viejos (string)
+  const productCats = product.categories || (product.category ? [product.category] : []);
+  setSelectedCategories(productCats);
+  
   document.getElementById("productPrice").value = product.price;
   document.getElementById("productLink").value = product.link;
 
   // Cargar imágenes existentes en los slots
   window.productImages = ['', '', ''];
-  product.images.forEach((url, index) => {
+  (product.images || []).forEach((url, index) => {
     if (index < 3) {
       window.setImageSlot(index, url);
     }
@@ -91,6 +97,7 @@ async function editProduct(id) {
   document.getElementById("formTitle").textContent = "Editar Producto";
   document.querySelector(".admin-form-container").scrollIntoView({ behavior: "smooth" });
 }
+
 
 /* ==========================
    ELIMINAR PRODUCTO
@@ -123,28 +130,49 @@ function resetForm() {
 }
 
 /* ==========================
-   CARGAR CATEGORÍAS EN EL SELECT DEL FORMULARIO
+   CARGAR CATEGORÍAS EN CHECKBOXES
    ========================== */
 async function loadCategorySelect() {
-  const select = document.getElementById("productCategory");
-  if (!select) return;
+  const container = document.getElementById("productCategories");
+  if (!container) return;
 
-  const previousValue = select.value;
-
-  select.innerHTML = `<option value="">Selecciona una categoría</option>`;
-
+  const previouslySelected = getSelectedCategories();
   const categories = await categoryService.getAll();
+  container.innerHTML = "";
+
   categories.forEach(category => {
-    const option = document.createElement("option");
-    option.value = category.name;
-    option.textContent = category.name;
-    select.appendChild(option);
+    const label = document.createElement("label");
+    label.className = "category-option";
+    label.style.display = "inline-flex";
+    label.style.alignItems = "center";
+    label.style.marginRight = "15px";
+    label.style.gap = "5px";
+
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.name = "productCategory";
+    input.value = category.name;
+
+    const span = document.createElement("span");
+    span.textContent = category.name;
+
+    label.append(input, span);
+    container.appendChild(label);
   });
 
-  // Mantener la selección previa si sigue existiendo
-  if (previousValue) select.value = previousValue;
+  setSelectedCategories(previouslySelected);
 }
 
+function getSelectedCategories() {
+  return [...document.querySelectorAll('input[name="productCategory"]:checked')]
+    .map(input => input.value);
+}
+
+function setSelectedCategories(categories) {
+  document.querySelectorAll('input[name="productCategory"]').forEach(input => {
+    input.checked = categories.includes(input.value);
+  });
+}
 /* ==========================
    CRUD DE CATEGORÍAS
    ========================== */

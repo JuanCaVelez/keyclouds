@@ -297,15 +297,11 @@ header {
     font-size: 18px;
 }
 
-.admin-product-category {
-    display: inline-block;
-    background-color: #836b9d;
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    width: fit-content;
+.category-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-height: 48px;
 }
 
 .admin-product-price {

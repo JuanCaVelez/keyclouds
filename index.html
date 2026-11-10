@@ -61,19 +61,51 @@
     </section>
 
     <footer>
-        <div class="footer-content">      
-            <div class="social-media">
-                <a href="https://wa.me/+593980467248" aria-label="Whatsapp">
-                    <i class="fa-brands fa-whatsapp"></i> Whatsapp
-                </a>
-                <a href="https://www.tiktok.com/@key.clouds_ec" aria-label="Tik Tok">
-                    <i class="fa-brands fa-tiktok"></i> Tik Tok
-                </a>
-                <a href="https://www.instagram.com/keycloudsstore/" aria-label="Instagram">
-                    <i class="fa-brands fa-instagram"></i> Instagram
-                </a>
+        <div class="footer-container">
+            <div class="footer-col footer-brand">
+                <h2 class="footer-logo">KeyClouds</h2>
+                <p>Velas artesanales de cera de soja, hechas a mano en Ecuador con amor y detalles que iluminan momentos.</p>
+                <p class="footer-location"><i class="fa-solid fa-location-dot">Quito, Ecuador</i></p>
             </div>
-            <p>&copy; 2026 KeyClouds. All rights reserved.</p>
+
+            <div class="footer-col">
+                <h3>Ayuda</h3>
+                <ul>
+                    <li><a href="#">Preguntas frecuentes</a></li>
+                    <li><a href="#">Envíos y entregas</a></li>
+                    <li><a href="#">Cambios y devoluciones</a></li>
+                    <li><a href="#">Políticas de privacidad</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>Contacto</h3>
+                <ul class="footer-contact">
+                    <li>
+                        <i class="fa-brands fa-whatsapp"></i>
+                        <a href="https://wa.me/+593980467248">098 046 7248</a>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>Quito, Ecuador</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>Síguenos</h3>
+                <div class="footer-social">
+                    <a href="https://www.instagram.com/keycloudsstore/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@key.clouds_ec" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://wa.me/+593980467248" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+                <p class="footer-handle">@keycloudsstore</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 KeyClouds. Todos los derechos reservados.</p>
         </div>
     </footer>
 
@@ -153,8 +185,8 @@
         };
 
         // Búsqueda desde la barra móvil
-        window.searchProductsMobile = async function() {
-            const searchTerm = document.getElementById('searchInputMobile').value.toLowerCase().trim();
+        window.searchProducts = async function() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
             const products = await getProducts();
 
             if (!searchTerm) {
@@ -162,10 +194,12 @@
                 return;
             }
 
-            const filtered = products.filter(product =>
-                product.name.toLowerCase().includes(searchTerm) ||
-                (product.category && product.category.toLowerCase().includes(searchTerm))
-            );
+            const filtered = products.filter(product => {
+            const nameMatches = product.name.toLowerCase().includes(searchTerm);
+            const categories = Array.isArray(product.categories) ? product.categories : (product.category ? [product.category] : []);
+            const categoryMatches = categories.some(cat => cat.toLowerCase().includes(searchTerm));
+            return nameMatches || categoryMatches;
+            });
 
             displayProducts(filtered);
         };

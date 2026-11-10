@@ -51,11 +51,15 @@ async function deleteProduct(id) {
   }
 }
 
+function getProductCategories(product) {
+  if (Array.isArray(product.categories)) return product.categories;
+  if (product.category) return [product.category];
+  return [];
+}
+
 /* ==========================
    FILTRO POR CATEGORÍA
    ========================== */
-let currentSelectedCategory = "all";
-
 async function filterByCategory(category) {
   currentSelectedCategory = category;
   const products = await getProducts();
@@ -63,7 +67,10 @@ async function filterByCategory(category) {
   if (category === "all") {
     displayProducts(products);
   } else {
-    const filtered = products.filter(p => p.category === category);
+    const filtered = products.filter(p => {
+      const cats = getProductCategories(p);
+      return cats.includes(category);
+    });
     displayProducts(filtered);
   }
 }
@@ -80,22 +87,18 @@ async function displayProducts(productsToDisplay = null) {
 
   if (products.length === 0) {
     grid.style.display = "none";
-    noProducts.style.display = "block";
-
-    const text = document.getElementById("noProductsText");
-    if (text) {
-      text.textContent =
-        currentSelectedCategory === "all"
-          ? "No hay productos disponibles."
-          : `No hay productos disponibles en la categoría "${currentSelectedCategory}".`;
-    }
+    if (noProducts) noProducts.style.display = "block";
     return;
   }
 
   grid.style.display = "grid";
-  noProducts.style.display = "none";
+  if (noProducts) noProducts.style.display = "none";
 
-  grid.innerHTML = products.map(product => `
+  grid.innerHTML = products.map(product => {
+    const cats = getProductCategories(product);
+    const categoryText = cats.join(", ");
+
+    return `
     <div class="product-card">
       <div class="product-image">
         <img 
@@ -116,16 +119,16 @@ async function displayProducts(productsToDisplay = null) {
 
       <div class="product-info">
         <h3>${product.name}</h3>
-        ${product.category ? `<p class="product-category">${product.category}</p>` : ""}
+        ${categoryText ? `<p class="product-category">${categoryText}</p>` : ""}
         <p class="product-price">$${product.price}</p>
         <a href="#" onclick="buyProduct('${product.id}')" class="btn-buy">
           <i class="fa-solid fa-cart-shopping"></i> Comprar
         </a>
       </div>
     </div>
-  `).join("");
+  `;
+  }).join("");
 
-  // Guardar productos en memoria para acceso rápido
   window._cachedProducts = products;
 }
 
@@ -185,12 +188,15 @@ async function displayAdminProducts() {
   if (!container) return;
 
   if (products.length === 0) {
-    container.innerHTML =
-      '<p class="no-products-admin">No hay productos registrados aún.</p>';
+    container.innerHTML = '<p class="no-products-admin">No hay productos registrados aún.</p>';
     return;
   }
 
-  container.innerHTML = products.map(product => `
+  container.innerHTML = products.map(product => {
+    const cats = getProductCategories(product);
+    const categoryText = cats.length > 0 ? cats.join(", ") : "Sin categoría";
+
+    return `
     <div class="admin-product-item">
       <img 
         src="${product.images[0]}" 
@@ -199,7 +205,7 @@ async function displayAdminProducts() {
 
       <div class="admin-product-details">
         <h4>${product.name}</h4>
-        ${product.category ? `<p class="admin-product-category">${product.category}</p>` : ""}
+        <p class="admin-product-category">${categoryText}</p>
         <p class="admin-product-price">${product.price} $</p>
         <a href="${product.link}" target="_blank" class="admin-product-link">
           <i class="fa-solid fa-link"></i> Ver enlace
@@ -215,7 +221,8 @@ async function displayAdminProducts() {
         </button>
       </div>
     </div>
-  `).join("");
+  `;
+  }).join("");
 
   window._cachedProducts = products;
 }
