@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles/style.css?v=2.0">
+    <link rel="stylesheet" href="styles/style.css?v=3.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,47 +12,109 @@
 </head>
 <body>
     <header>
-    <nav class="navbar">
-        <div class="logo">
-            <h1>KeyClouds</h1>
-        </div>
-        <ul class="nav-links">
-            <li>
-                <a href="#inicio" onclick="selectCategory('all', 'Todas las categorías'); return false;">Inicio</a>
-            </li>
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" onclick="return false">
-                    Productos <i class="fa-solid fa-chevron-down"></i>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="#inicio" onclick="selectCategory('all', 'Todas las categorías'); return false;">
+                    <h1>KeyClouds</h1>
                 </a>
-                <ul class="dropdown-menu" id="navbarCategoryMenu">
-                    <li><a href="#productos" onclick="selectCategory('all', 'Todas las categorías'); return false;">Todas las categorías</a></li>
-                </ul>
-            </li>
-        </ul>
-        <div class="admin-access">
-            <a href="login.html" class="admin-link" title="Acceso administrador">
-                <i class="fa-solid fa-user-shield"></i>
-            </a>
-        </div>
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Buscar..." aria-label="Buscar productos">
-            <button type="button" onclick="searchProducts()" aria-label="Buscar">
-                <i class="fa-solid fa-magnifying-glass"></i>
-            </button>
-        </div>
-        <!-- Barra de búsqueda completa solo visible en móvil (fila 3 del grid) -->
-        <div class="search-full">
-            <input type="text" id="searchInputMobile" placeholder="Buscar productos..." aria-label="Buscar productos">
-            <button type="button" onclick="searchProductsMobile()" aria-label="Buscar">
-                <i class="fa-solid fa-magnifying-glass"></i>
-            </button>
-        </div>
-    </nav>
+            </div>
+            
+            <ul class="nav-links">
+                <li>
+                    <a href="#inicio" class="nav-item active" onclick="selectCategory('all', 'Todas las categorías'); return false;">Inicio</a>
+                </li>
+                <li class="dropdown">
+                    <a href="#productos" class="dropdown-toggle" onclick="return false">
+                        Productos <i class="fa-solid fa-chevron-down"></i>
+                    </a>
+                    <ul class="dropdown-menu" id="navbarCategoryMenu">
+                        <li>
+                            <a href="#productos" onclick="selectCategory('all', 'Todas las categorías'); return false;">
+                                Todas las categorías
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#personalizar" class="nav-item">Personaliza tu vela</a></li>
+                <li><a href="#nosotros" class="nav-item">Nosotros</a></li>
+                <li><a href="#cuidados" class="nav-item">Cuidados</a></li>
+            </ul>
+
+            <div class="header-actions">
+                <!-- Botón de Búsqueda -->
+                <button type="button" class="icon-btn search-trigger" onclick="toggleSearchBox()" aria-label="Buscar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                
+                <!-- Acceso a Login / Admin -->
+                <a href="login.html" class="icon-btn" title="Acceso administrador" aria-label="Usuario">
+                    <i class="fa-regular fa-user"></i>
+                </a>
+
+                <!-- Botón WhatsApp Destacado -->
+                <a href="https://wa.me/+593980467248" target="_blank" class="btn-header-wa">
+                    <i class="fa-brands fa-whatsapp"></i> Comprar por WhatsApp
+                </a>
+            </div>
+
+            <!-- Caja de búsqueda flotante para Desktop -->
+            <div class="search-popover" id="searchPopover" style="display: none;">
+                <input type="text" id="searchInput" placeholder="Buscar productos..." aria-label="Buscar productos">
+                <button type="button" onclick="searchProducts()">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+
+            <!-- Barra de búsqueda para móvil -->
+            <div class="search-full">
+                <input type="text" id="searchInputMobile" placeholder="Buscar productos..." aria-label="Buscar productos">
+                <button type="button" onclick="searchProductsMobile()" aria-label="Buscar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+        </nav>
     </header>
 
-    <div>
-        
-    </div>
+    <!-- HERO BANNER -->
+    <section id="inicio" class="hero-banner">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Velas que transforman momentos en recuerdos</h1>
+                <p class="hero-subtitle">Hechas a mano con cera de soja y personalizadas para ti.</p>
+                <div class="hero-buttons">
+                    <a href="#productos" class="btn-hero-primary" onclick="selectCategory('all', 'Todas las categorías');">Ver colección</a>
+                    <a href="https://wa.me/+593980467248?text=Hola%20👋%20Quiero%20personalizar%20mi%20vela" target="_blank" class="btn-hero-secondary">Personalizar mi vela</a>
+                </div>
+            </div>
+            <div class="hero-image-wrapper">
+                <!-- Reemplaza 'img/hero-candles.jpg' por la ruta de tu foto del bodegón -->
+                <img src="https://res.cloudinary.com/images-tienda/image/upload/v1794407659/h2jdswwknfcq3ihqilwm.png" alt="Velas artesanales KeyClouds" class="hero-img">
+            </div>
+        </div>
+
+        <!-- BARRA DE BENEFICIOS -->
+        <div class="hero-features">
+            <div class="feature-item">
+                <i class="fa-solid fa-leaf"></i>
+                <span>Cera de soja</span>
+            </div>
+            <div class="feature-divider"></div>
+            <div class="feature-item">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span>Hechas a mano</span>
+            </div>
+            <div class="feature-divider"></div>
+            <div class="feature-item">
+                <i class="fa-solid fa-pen-fancy"></i>
+                <span>Personalizables</span>
+            </div>
+            <div class="feature-divider"></div>
+            <div class="feature-item">
+                <i class="fa-solid fa-truck-fast"></i>
+                <span>Envíos a todo Ecuador</span>
+            </div>
+        </div>
+    </section>
 
     <section id="productos">
         <h2 id="productosTitle">Nuestros productos</h2>
@@ -67,7 +129,7 @@
             <div class="footer-col footer-brand">
                 <h2 class="footer-logo">KeyClouds</h2>
                 <p>Velas artesanales de cera de soja, hechas a mano en Ecuador con amor y detalles que iluminan momentos.</p>
-                <p class="footer-location"><i class="fa-solid fa-location-dot">Quito, Ecuador</i></p>
+                <p class="footer-location"><i class="fa-solid fa-location-dot"></i> Quito, Ecuador</p>
             </div>
 
             <div class="footer-col">
@@ -156,7 +218,6 @@
             menu.innerHTML = html;
         }
 
-        // Función expuesta globalmente para que funcionen los clics en el menú y en las tarjetas
         window.selectCategory = async function(category, displayName) {
             const title = document.getElementById('productosTitle');
             if (title) {
@@ -167,11 +228,26 @@
             }
 
             await filterByCategory(category);
-            const section = document.getElementById("productos");
-            if (section) section.scrollIntoView({ behavior: 'smooth' });
+            
+            if (category === "all") {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                const section = document.getElementById("productos");
+                if (section) section.scrollIntoView({ behavior: 'smooth' });
+            }
         };
 
-        // Búsqueda escritorio
+        window.toggleSearchBox = function() {
+            const box = document.getElementById('searchPopover');
+            if (box) {
+                const isHidden = box.style.display === 'none';
+                box.style.display = isHidden ? 'flex' : 'none';
+                if (isHidden) {
+                    document.getElementById('searchInput')?.focus();
+                }
+            }
+        };
+
         window.searchProducts = async function() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
             const products = await getProducts();
@@ -191,7 +267,6 @@
             displayProducts(filtered);
         };
 
-        // Búsqueda desde la barra móvil (usando searchInputMobile)
         window.searchProductsMobile = async function() {
             const searchTerm = document.getElementById('searchInputMobile').value.toLowerCase().trim();
             const products = await getProducts();
