@@ -45,23 +45,29 @@ header {
 .logo {
     display: flex;
     align-items: center;
-    height: 100%;
+    justify-content: center;
+    height: 70px;
+    width: 180px;           /* Define un ancho visible amplio para el logo */
+    overflow: hidden;       /* Corta cualquier lienzo o recuadro fuera de este área */
+    position: relative;
 }
 
 .logo a {
-    text-decoration: none;
-    display: inline-flex;
+    display: flex;
     align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
 }
 
-.logo h1 {
-    color: #836b9d;
-    margin: 0;
-    padding-top: 6px;
-    font-size: 34px;
-    font-weight: bold;
-    font-family: 'Amoresa', cursive;
-    line-height: 1;
+.logo-img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    transform: scale(2.5);      /* 👈 AGRANDA EL LOGO INTERNO ELIMINANDO LOS MÁRGENES */
+    mix-blend-mode: multiply;   /* 👈 MEZCLA CUALQUIER TONO CLARO CON EL FONDO BLANCO */
+    filter: contrast(1.1);
 }
 
 /* ENLACES DE NAVEGACIÓN */
@@ -245,156 +251,185 @@ header {
     display: none;
 }
 
-/* ========== HERO BANNER ESTILO MOCKUP ========== */
+/* ========== HERO BANNER CON BARRA INTERSECTADA ========== */
 .hero-banner {
-    background-color: #fafafa;
-    padding: 40px 40px 20px;
+    position: relative;
+    width: 100%;
     max-width: 1400px;
-    margin: 0 auto;
-    text-align: left;
+    margin: 20px auto 16px;            /* Margen inferior pequeño hacia la barra */
+    min-height: 660px;
+    border-radius: 24px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding: 40px 50px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
+.hero-bg-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left 10%; /* 👈 Muestra más plano vertical y aleja visualmente la toma sin encoger la foto */
+    z-index: 1;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0.92) 0%,
+        rgba(255, 255, 255, 0.5) 45%,
+        rgba(255, 255, 255, 0) 80%
+    );
+    z-index: 2;
+}
+
+/* Contenido del Hero (Texto y Botones) */
 .hero-container {
-    display: grid;
-    grid-template-columns: 1fr 1.1fr;
-    align-items: center;
-    gap: 40px;
-    margin-bottom: 50px;
+    position: relative;
+    z-index: 3;
+    max-width: 480px;
+    text-align: left;
+    margin-left: 10px;
+    padding-top: 40px;
 }
 
 .hero-title {
-    font-size: 46px;
+    font-size: 42px;
     font-weight: 700;
     color: #1a1a1a;
     line-height: 1.15;
-    margin: 0 0 18px;
-    font-family: 'Arial', sans-serif;
+    margin-bottom: 16px;
+    text-align: left;
 }
 
 .hero-subtitle {
-    font-size: 18px;
-    color: #555555;
-    margin: 0 0 30px;
-    line-height: 1.5;
+    font-size: 17px;
+    color: #444444;
+    margin-bottom: 28px;
+    line-height: 1.4;
+    text-align: left;
 }
 
 .hero-buttons {
     display: flex;
     gap: 16px;
-    flex-wrap: wrap;
+    justify-content: flex-start;
 }
 
 .btn-hero-primary {
     background-color: #836b9d;
     color: #ffffff;
-    padding: 12px 28px;
+    padding: 14px 32px;
     border-radius: 999px;
     text-decoration: none;
     font-weight: 600;
     font-size: 15px;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(131, 107, 157, 0.35);
 }
 
 .btn-hero-primary:hover {
     background-color: #6a5580;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(131, 107, 157, 0.3);
+    box-shadow: 0 6px 20px rgba(131, 107, 157, 0.45);
 }
 
 .btn-hero-secondary {
-    background-color: transparent;
+    background-color: rgba(255, 255, 255, 0.85);
     color: #836b9d;
-    border: 1.5px solid #836b9d;
-    padding: 12px 28px;
+    border: 2px solid #836b9d;
+    padding: 14px 32px;
     border-radius: 999px;
     text-decoration: none;
     font-weight: 600;
     font-size: 15px;
+    backdrop-filter: blur(4px);
     transition: all 0.3s ease;
 }
 
 .btn-hero-secondary:hover {
-    background-color: #f0ebf5;
+    background-color: #836b9d;
+    color: #ffffff;
     transform: translateY(-2px);
 }
 
-.hero-image-wrapper {
+/* ========== BARRA DE BENEFICIOS MITAD DENTRO / MITAD FUERA ========== */
+.features-bar-container {
     width: 100%;
-    height: 100%;
-    max-height: 420px;
-    border-radius: 24px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: transparent;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-}
-
-.hero-img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center;
-}
-
-/* BARRA DE BENEFICIOS */
-.hero-features {
+    max-width: 1400px;
+    margin: 0 auto 40px;                /* Centrada y con espacio hacia la siguiente sección */
+    background-color: #fcf8f5;          /* Fondo crema cálido como tu referencia */
+    border-radius: 20px;                /* Tarjeta propia con bordes redondeados */
+    padding: 30px 40px;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background-color: #ffffff;
-    padding: 24px 30px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-    border: 1px solid #f0f0f0;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(232, 226, 220, 0.7);
 }
 
 .feature-item {
     display: flex;
-    flex-direction: column;
+    flex-direction: column;                  /* Ícono arriba, texto abajo */
     align-items: center;
-    gap: 8px;
-    color: #333333;
+    justify-content: center;
+    gap: 12px;
+    flex: 1;
+    text-align: center;
 }
 
 .feature-item i {
-    font-size: 24px;
+    font-size: 36px;
     color: #836b9d;
 }
 
 .feature-item span {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
+    color: #2b2b2b;
 }
 
 .feature-divider {
     width: 1px;
-    height: 35px;
-    background-color: #e5e5e5;
+    height:48px;
+    background-color: #e8e2dc;
+    margin: 0 10px;
 }
-
-/* RESPONSIVE HERO */
+/* RESPONSIVE */
 @media (max-width: 992px) {
+    .hero-banner {
+        padding: 40px 25px 20px;
+    }
+    .hero-overlay {
+        background: rgba(255, 255, 255, 0.85);
+    }
     .hero-container {
-        grid-template-columns: 1fr;
+        max-width: 100%;
         text-align: center;
     }
     .hero-buttons {
         justify-content: center;
     }
-    .hero-image-wrapper {
-        height: 300px;
-    }
     .hero-title {
-        font-size: 34px;
+        font-size: 32px;
     }
 }
 
+/* RESPONSIVE PARA MÓVILES */
 @media (max-width: 768px) {
     .hero-features {
         flex-direction: column;
-        gap: 16px;
+        gap: 18px;
+        padding: 20px;
     }
     .feature-divider {
         display: none;

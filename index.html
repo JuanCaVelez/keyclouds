@@ -2,8 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles/style.css?v=3.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="styles/style.css?v=3.2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +14,7 @@
         <nav class="navbar">
             <div class="logo">
                 <a href="#inicio" onclick="selectCategory('all', 'Todas las categorías'); return false;">
-                    <h1>KeyClouds</h1>
+                    <img src="https://res.cloudinary.com/images-tienda/image/upload/v1794418910/eejuxnkgc5umyddrkmqd.png" alt="KeyClouds BY ABBY" class="logo-img">
                 </a>
             </div>
             
@@ -77,6 +76,11 @@
 
     <!-- HERO BANNER -->
     <section id="inicio" class="hero-banner">
+    <!-- BLOQUE SUPERIOR CON LA FOTO Y EL TEXTO -->
+    <div class="hero-main">
+        <div class="hero-overlay"></div>
+        <img src="https://res.cloudinary.com/images-tienda/image/upload/v1794407659/h2jdswwknfcq3ihqilwm.png" alt="Velas artesanales KeyClouds" class="hero-bg-img">
+        
         <div class="hero-container">
             <div class="hero-content">
                 <h1 class="hero-title">Velas que transforman momentos en recuerdos</h1>
@@ -86,35 +90,31 @@
                     <a href="https://wa.me/+593980467248?text=Hola%20👋%20Quiero%20personalizar%20mi%20vela" target="_blank" class="btn-hero-secondary">Personalizar mi vela</a>
                 </div>
             </div>
-            <div class="hero-image-wrapper">
-                <!-- Reemplaza 'img/hero-candles.jpg' por la ruta de tu foto del bodegón -->
-                <img src="https://res.cloudinary.com/images-tienda/image/upload/v1794407659/h2jdswwknfcq3ihqilwm.png" alt="Velas artesanales KeyClouds" class="hero-img">
-            </div>
         </div>
-
-        <!-- BARRA DE BENEFICIOS -->
-        <div class="hero-features">
-            <div class="feature-item">
-                <i class="fa-solid fa-leaf"></i>
-                <span>Cera de soja</span>
-            </div>
-            <div class="feature-divider"></div>
-            <div class="feature-item">
-                <i class="fa-solid fa-heart-pulse"></i>
-                <span>Hechas a mano</span>
-            </div>
-            <div class="feature-divider"></div>
-            <div class="feature-item">
-                <i class="fa-solid fa-pen-fancy"></i>
-                <span>Personalizables</span>
-            </div>
-            <div class="feature-divider"></div>
-            <div class="feature-item">
-                <i class="fa-solid fa-truck-fast"></i>
-                <span>Envíos a todo Ecuador</span>
-            </div>
+    </div>
+</section>
+    <!-- CONTENEDOR INDEPENDIENTE PARA LA BARRA DE BENEFICIOS -->
+    <div class="features-bar-container">
+        <div class="feature-item">
+            <i class="fa-solid fa-leaf"></i>
+            <span>Cera de soja</span>
         </div>
-    </section>
+        <div class="feature-divider"></div>
+        <div class="feature-item">
+            <i class="fa-solid fa-hand-holding-heart"></i>
+            <span>Hechas a mano</span>
+        </div>
+        <div class="feature-divider"></div>
+        <div class="feature-item">
+            <i class="fa-solid fa-pencil"></i>
+            <span>Personalizables</span>
+        </div>
+        <div class="feature-divider"></div>
+        <div class="feature-item">
+            <i class="fa-solid fa-truck-fast"></i>
+            <span>Envíos a todo Ecuador</span>
+        </div>
+    </div>
 
     <section id="productos">
         <h2 id="productosTitle">Nuestros productos</h2>
